@@ -1,0 +1,364 @@
+﻿@using IIB.ICDD.Model.Linkset.Link
+@using IIB.ICDD.Model.Linkset.Identifier
+@using IIB.ICDD.Model.Linkset
+@using IcddWebApp.Services.Models.Enums
+@model IcddWebApp.PageModels.Container.LinksetPageModel
+
+@{ var binaryLinks = Model.Linkset.HasLinks.Where(x => x.GetType() == typeof(LsBinaryLink)).Cast<LsBinaryLink>().ToList(); }
+@{ var directedLinks = Model.Linkset.HasLinks.Where(x => x.GetType() == typeof(LsDirectedLink)).Cast<LsDirectedLink>().ToList();}
+@{ var directedBinaryLinks = Model.Linkset.HasLinks.Where(x => x.GetType() == typeof(LsDirectedBinaryLink) || x.GetType().IsSubclassOf(typeof(LsDirectedBinaryLink))).Cast<LsDirectedBinaryLink>().ToList();}
+@{ var directed1NLinks = Model.Linkset.HasLinks.Where(x => x.GetType() == typeof(LsDirected1ToNLink) || x.GetType().IsSubclassOf(typeof(LsDirected1ToNLink))).Cast<LsDirected1ToNLink>().ToList();}
+@{ var isArchived = Model.ContainerMetadata.Status == ContainerStatus.ARCHIVED ? "disabled" : ""; }
+
+@{
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddBinaryLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddDirectedBinaryLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddDirected1ToNLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddDirectedLink", Model);
+}
+
+<div class="row">
+    <div class="col-10">
+        <span class="display-6">@Model.Linkset.FileName</span>
+    </div>
+    <div class="col-2 float-end">
+        @if (System.IO.File.Exists("wwwroot/images/doctypes/" + "rdf" + ".png"))
+        {
+            string file = "rdf";
+            file += ".png";
+            <img class="img-fluid" style="width: 64px; height: 64px; padding: 5px;" src="~/images/doctypes/@file" alt="@file" />
+        }
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-12">
+        <h5 class="float-start">Links</h5>
+
+
+        @*<a href="@Url.Action("DownloadContent", "Container", new { projId = Model.Project.Id, id = Model.ContainerMetadata.Id, containerVersion = Model.ContainerMetadata.Version, contentId = Model.Linkset.Guid })"
+               class="btn btn-outline-success btn-sm rounded-0 btn-block me-1">
+                <span class="oi oi-cloud-download"></span> Download Linkset
+            </a><br />*@
+        <button class="btn btn-outline-danger btn-sm rounded-0 mx-1 float-end" data-bs-toggle="modal" data-bs-target="#modalDeleteLinkset-@Model.Linkset.Guid" @isArchived><span class="oi oi-x"></span> Delete Linkset</button>
+
+        <div class="dropdown float-end mx-1">
+            <button class="btn btn-rub-blue float-end rounded-0 btn-sm dropdown-toggle" onclick="ResetForms('@Model.Linkset.Guid')" type="button" id="dropdownLinkButton-top" data-bs-toggle="dropdown" aria-expanded="false" @isArchived>
+                <span class="oi oi-plus"></span> Add Link
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownLinkButton">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-binary-@Model.Linkset.Guid">Add Binary Link</a></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-directed-@Model.Linkset.Guid">Add Directed Link</a></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-directedbinary-@Model.Linkset.Guid">Add Directed-Binary Link</a></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-directed1ton-@Model.Linkset.Guid">Add Directed-1-To-N Link</a></li>
+            </ul>
+        </div>
+        <span class="float-end mx-1">@Model.Linkset.HasLinks.Count entries</span>
+    </div>
+</div>
+
+<table class="table table-sm table-striped table-bordered my-2">
+    <thead width="100%" class="bg-rub-blue text-white">
+        <tr width="100%" class="bg-rub-blue text-white">
+            <th scope="col" style="text-align: center;">Type</th>
+            <th scope="col" style="text-align: center;">From / Left</th>
+            <th scope="col" style="text-align: center;">To / Right</th>
+            <th scope="col" style="text-align: center;">Details</th>
+        </tr>
+    </thead>
+    @foreach (LsBinaryLink link in binaryLinks)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @{ string filelink = link.EffectiveType.ToLower();
+                    string linkType = "Binary Link";
+                    if (link.GetType().IsSubclassOf(typeof(LsDirected1ToNLink)))
+                    {
+                        filelink = "directed1tonlink";
+                        linkType = "Directed 1 to N Link";
+                    }
+                    else if (link.GetType().IsSubclassOf(typeof(LsDirectedBinaryLink)))
+                    {
+                        filelink = "directedbinarylink";
+                        linkType = "Directed Binary Link";
+                    }
+
+                    filelink += ".png";}
+                @if (System.IO.File.Exists("wwwroot/images/linktypes/" + filelink))
+                {
+                    <img class="img-fluid" style="padding: 5px; width:100px; vertical-align:middle;" src="~/images/linktypes/@filelink" alt="@filelink" data-bs-toggle="tooltip" data-bs-placement="top" title="@linkType"/>
+
+                }
+            </td>
+            <td style="text-align: center; vertical-align:middle;">
+                @if (System.IO.File.Exists("wwwroot/images/doctypes/" + link.First.HasDocument.FileType + ".png"))
+                {
+                    string file = link.First.HasDocument.FileType;
+                    file += ".png";
+                    <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                }
+                else
+                {
+                    <span class="oi oi-spreadsheet"></span>
+                }
+
+                <span>@link.First.HasDocument.Name</span>
+
+                <span>@link.First.HasIdentifier?.ToString()</span>
+
+            </td>
+            <td style="text-align: center; vertical-align:middle ;">
+                @if (System.IO.File.Exists("wwwroot/images/doctypes/" + link.Second.HasDocument.FileType + ".png"))
+                {
+                    string file = link.Second.HasDocument.FileType;
+                    file += ".png";
+                    <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                }
+                else
+                {
+                    <span class="oi oi-spreadsheet"></span>
+                }
+
+                <span>@link.Second.HasDocument.Name</span>
+
+                <span>@link.Second.HasIdentifier?.ToString()</span>
+
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <button id="details-@link.Guid" class="btn btn-link" onclick="loadLink('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.Linkset.Guid','@link.Guid')"><span class="oi oi-magnifying-glass"></span></button>
+            </td>
+        </tr>
+    }
+    @foreach (LsDirectedLink link in directedLinks)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @{ string filelink = link.EffectiveType.ToLower();
+                    string linkType = "Directed Link";
+                    if (link.GetType().IsSubclassOf(typeof(LsDirected1ToNLink)))
+                    {
+                        filelink = "directed1tonlink";
+                        linkType = "Directed 1 to N Link";
+                    }
+                    else if (link.GetType().IsSubclassOf(typeof(LsDirectedBinaryLink)))
+                    {
+                        filelink = "directedbinarylink";
+                        linkType = "Directed Binary Link";
+                    }
+
+                    filelink += ".png";}
+                @if (System.IO.File.Exists("wwwroot/images/linktypes/" + filelink))
+                {
+                    <img class="img-fluid" style="padding: 5px; width:100px; vertical-align:middle;" src="~/images/linktypes/@filelink" alt="@filelink"   data-bs-toggle="tooltip" data-bs-placement="top" title="@linkType"/>
+
+                }
+            </td>
+            <td style="text-align: center; vertical-align:middle;">
+                @foreach (var elem in link.FromElements)
+                {
+                    @if (System.IO.File.Exists("wwwroot/images/doctypes/" + elem.HasDocument.FileType + ".png"))
+                    {
+                        string file = elem.HasDocument.FileType;
+                        file += ".png";
+                        <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                    }
+                    else
+                    {
+                        <span class="oi oi-spreadsheet"></span>
+                    }
+
+                    <span>@elem.HasDocument.Name </span>
+
+                    <span>@elem.HasIdentifier?.ToString()</span>
+
+                    <br />
+                }
+            </td>
+            <td style="text-align: center; vertical-align:middle;">
+                @foreach (var elem in link.ToElements)
+                {
+                    @if (System.IO.File.Exists("wwwroot/images/doctypes/" + elem.HasDocument.FileType + ".png"))
+                    {
+                        string file = elem.HasDocument.FileType;
+                        file += ".png";
+                        <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                    }
+                    else
+                    {
+                        <span class="oi oi-spreadsheet"></span>
+                    }
+
+                    <span>@elem.HasDocument.Name</span>
+
+                    <span>@elem.HasIdentifier?.ToString()</span>
+
+                    <br />
+                }
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <button id="@link.Guid" class="btn btn-link tab-clicker" onclick="loadLink('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.Linkset.Guid','@link.Guid')"><span class="oi oi-magnifying-glass"></span></button>
+            </td>
+        </tr>
+    }
+    @foreach (LsDirectedBinaryLink link in directedBinaryLinks)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @{ bool isLinkSubclass = false;
+                    string linktype = link.EffectiveType;
+                    string linkType = link.EffectiveType.Replace("Ls", "");
+                    if (link.GetType().IsSubclassOf(typeof(LsDirected1ToNLink)))
+                    {
+                        linktype = "directed1tonlink";
+                        isLinkSubclass = true;
+                    }
+                    else if (link.GetType().IsSubclassOf(typeof(LsDirectedBinaryLink)))
+                    {
+                        linktype = "directedbinarylink";
+                        isLinkSubclass = true;
+                    }
+
+                    string filelink = linktype.ToLower() + ".png";}
+                @if (System.IO.File.Exists("wwwroot/images/linktypes/" + filelink))
+                {
+                    <img class="img-fluid" style="padding: 5px; width:100px; vertical-align:middle;" src="~/images/linktypes/@filelink" alt="@filelink"   data-bs-toggle="tooltip" data-bs-placement="top" title="@link.EffectiveType"/>
+                }
+                else
+                {
+                    <div>@linktype</div><br />
+                    @if (isLinkSubclass)
+                    {
+                        <br />
+                        <div class="small">@link.EffectiveType</div>
+                    }
+                }
+            </td>
+            <td style="text-align: center; vertical-align:middle;">
+                @if (System.IO.File.Exists("wwwroot/images/doctypes/" + link.FromElement.HasDocument.FileType + ".png"))
+                {
+                    string file = link.FromElement.HasDocument.FileType;
+                    file += ".png";
+                    <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                }
+                else
+                {
+                    <span class="oi oi-spreadsheet"></span>
+                }
+
+                <span>@link.FromElement.HasDocument.Name</span>
+
+                <span>@link.FromElement.HasIdentifier?.ToString()</span>
+
+            </td>
+            <td style="text-align: center; vertical-align:middle ;">
+                @if (System.IO.File.Exists("wwwroot/images/doctypes/" + link.ToElement.HasDocument.FileType + ".png"))
+                {
+                    string file = link.ToElement.HasDocument.FileType;
+                    file += ".png";
+                    <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                }
+                else
+                {
+                    <span class="oi oi-spreadsheet"></span>
+                }
+
+                <span>@link.ToElement.HasDocument.Name</span>
+
+                <span>@link.ToElement.HasIdentifier?.ToString()</span>
+
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <button id="@link.Guid" class="btn btn-link tab-clicker" onclick="loadLink('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.Linkset.Guid','@link.Guid')"><span class="oi oi-magnifying-glass"></span></button>
+            </td>
+        </tr>
+    }
+    @foreach (LsDirected1ToNLink link in directed1NLinks)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @{ bool isLinkSubclass = false;
+                    string linktype = link.EffectiveType;
+                    if (link.GetType().IsSubclassOf(typeof(LsDirected1ToNLink)))
+                    {
+                        linktype = "directed1tonlink";
+                        isLinkSubclass = true;
+                    }
+                    else if (link.GetType().IsSubclassOf(typeof(LsDirectedBinaryLink)))
+                    {
+                        linktype = "directedbinarylink";
+                        isLinkSubclass = true;
+                    }
+
+                    string filelink = linktype.ToLower() + ".png";}
+                @if (System.IO.File.Exists("wwwroot/images/linktypes/" + filelink))
+                {
+                    <img class="img-fluid" style="padding: 5px; width:100px; vertical-align:middle;" src="~/images/linktypes/@filelink" alt="@filelink"  data-bs-toggle="tooltip" data-bs-placement="top" title="@link.EffectiveType"/>
+                }
+                else
+                {
+                    <div>@linktype</div><br />
+                    @if (isLinkSubclass)
+                    {
+                        <br />
+                        <div class="small">@link.EffectiveType</div>
+                    }
+                }
+            </td>
+            <td style="text-align: center; vertical-align:middle;">
+                @if (System.IO.File.Exists("wwwroot/images/doctypes/" + link.FromElement.HasDocument.FileType + ".png"))
+                {
+                    string file = link.FromElement.HasDocument.FileType;
+                    file += ".png";
+                    <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                }
+                else
+                {
+                    <span class="oi oi-spreadsheet"></span>
+                }
+
+                <span>@link.FromElement.HasDocument.Name</span>
+
+                <span>@link.FromElement.HasIdentifier?.ToString()</span>
+            </td>
+            <td style="text-align: center; vertical-align:middle;">
+                @foreach (var elem in link.ToElements)
+                {
+                    @if (System.IO.File.Exists("wwwroot/images/doctypes/" + elem.HasDocument.FileType + ".png"))
+                    {
+                        string file = elem.HasDocument.FileType;
+                        file += ".png";
+                        <img class="img-fluid" style="width: 20px; height: 20px;" src="~/images/doctypes/@file" alt="@file" />
+                    }
+                    else
+                    {
+                        <span class="oi oi-spreadsheet"></span>
+                    }
+
+                    <span>@elem.HasDocument.Name</span>
+
+                    <span>@elem.HasIdentifier?.ToString()</span>
+
+                    <br />
+                }
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <button id="@link.Guid" class="btn btn-link tab-clicker" onclick="loadLink('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.Linkset.Guid','@link.Guid')"><span class="oi oi-magnifying-glass"></span></button>
+            </td>
+        </tr>
+    }
+</table>
+<div class="dropdown">
+    <button class="btn btn-rub-blue float-end rounded-0 btn-sm dropdown-toggle" onclick="ResetForms('@Model.Linkset.Guid')" type="button" id="dropdownLinkButton-bottom" data-bs-toggle="dropdown" aria-expanded="false" @isArchived>
+        <span class="oi oi-plus"></span> Add Link
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownLinkButton">
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-binary-@Model.Linkset.Guid">Add Binary Link</a></li>
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-directed-@Model.Linkset.Guid">Add Directed Link</a></li>
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-directedbinary-@Model.Linkset.Guid">Add Directed-Binary Link</a></li>
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-directed1ton-@Model.Linkset.Guid">Add Directed-1-To-N Link</a></li>
+    </ul>
+</div>
+
+
+

@@ -1,0 +1,337 @@
+﻿@using IIB.ICDD.Model.Linkset.Link
+@using IIB.ICDD.Model.Linkset
+@using IIB.ICDD.Model.Linkset.Identifier
+@using IIB.ICDD.Model.Container
+@using IcddWebApp.Services.Models.Enums
+@model IcddWebApp.PageModels.Container.LinkPageModel
+
+@{
+    await Html.RenderPartialAsync("../Linkset/Modals/_DeleteLink", Model);
+}
+@{ var isArchived = Model.ContainerMetadata.Status == ContainerStatus.ARCHIVED ? "disabled" : ""; }
+
+
+<script>
+    $(function() {
+        window.initializeGraph('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.Linkset.Guid','@Model.Link.Guid');
+    });
+</script>
+
+<div class="row">
+    <div class="col-10">
+        <span class="display-6">Link Details</span>
+    </div>
+    <div class="col-2 float-end">
+        @{ string file = Model.Link.EffectiveType.ToLower();
+            if (Model.Link.GetType().IsSubclassOf(typeof(LsDirected1ToNLink)))
+            {
+                file = "directed1tonlink";
+            }
+            else if (Model.Link.GetType().IsSubclassOf(typeof(LsDirectedBinaryLink)))
+            {
+                file = "directedbinarylink";
+            }
+
+            file += ".png";}
+        @if (System.IO.File.Exists("wwwroot/images/linktypes/" + file))
+        {
+            <img class="img-fluid" style="padding: 5px;margin-top:12px; vertical-align:middle;" src="~/images/linktypes/@file" alt="@file" />
+        }
+    </div>
+</div>
+<hr />
+
+<ul class="nav nav-tabs navbar-dark">
+    <li class="nav-item">
+        <a id="content-tab" class="nav-link active" aria-current="page" href="#" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab" aria-controls="content" aria-selected="true">Link elements</a>
+    </li>
+    <li class="nav-item">
+        <a id="graph-tab" class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#graph" type="button" role="tab" aria-controls="graph" aria-selected="false">Graph</a>
+    </li>
+    <li class="nav-item">
+        <a id="json-tab" class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab" aria-controls="json" aria-selected="false">JSONLD</a>
+    </li>
+    <li class="nav-item ms-auto">
+        <button type="button" class="btn btn-outline-danger btn-sm rounded-0 me-1 float-end" data-bs-toggle="modal" data-bs-target="#modalDeleteLink-@Model.Link.Guid" @isArchived><span class="oi oi-x"></span> Delete Link</button>
+    </li>
+    <li class="nav-item">
+        <button class="btn btn-rub-blue float-end rounded-0 btn-sm mb-2" onclick="loadLinkset('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.Linkset.Guid')" type="button">
+            <span class="oi oi-action-undo"></span> Return to linkset
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content border border-2 border-top-0">
+    <div class="tab-pane active" id="content" role="tabpanel" aria-labelledby="content-tab">
+        <section id="content-section-@Model.Link.Guid" class="w-100">
+        @if (Model.Link.IsLinkType(typeof(LsBinaryLink)))
+            {
+                var obj = Model.Link as LsBinaryLink;
+                <table class="table table-sm table-striped table-bordered">
+                    <tr class="bg-rub-blue text-white">
+                        <td scope="col"><b>Type</b></td>
+                        <td>@obj.EffectiveType</td>
+                        <td class="col-1" style="text-align: center;"></td>
+                    </tr>
+                    @{
+                        <tr>
+                            <td scope="col"><b>From</b></td>
+                            <td>@obj.First.ToString()</td>
+                            <td style="text-align: center;">
+                                @if (obj.First.HasDocument.Name.ToLower().Contains("ifc"))
+                                {
+                                    var ifcGuid = (obj.First?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                    if (ifcGuid != null)
+                                    {
+                                        await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(obj.First.HasDocument.Guid, ifcGuid));
+                                    }
+                                    else
+                                    {
+                                        <button id="@obj.First.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.First.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                }
+                                else
+                                {
+                                    <button id="@obj.First.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.First.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td scope="col"><b>To</b></td>
+                            <td>@obj.Second.ToString()</td>
+
+                            <td style="text-align: center;">
+                                @if (obj.Second.HasDocument.Name.ToLower().Contains("ifc"))
+                                {
+                                    var ifcGuid = (obj.Second?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                    if (ifcGuid != null)
+                                    {
+                                        await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(obj.Second.HasDocument.Guid, ifcGuid));
+                                    }
+                                    else
+                                    {
+                                        <button id="@obj.Second.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.Second.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                }
+                                else
+                                {
+                                    <button id="@obj.Second.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.Second.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+
+            }
+            @if (Model.Link.IsLinkType(typeof(LsDirectedLink)))
+            {
+                var obj = Model.Link as LsDirectedLink;
+                <table class="table table-sm table-bordered">
+                    <tr class="bg-rub-blue text-white">
+                        <td scope="col"><b>Type</b></td>
+                        <td>@obj.EffectiveType</td>
+                        <td class="col-1" style="text-align: center;"></td>
+                    </tr>
+                    @{
+                        int num = 0;
+                        foreach (var elem in obj.FromElements)
+                        {
+                            num++;
+                            <tr style="background-color: #FFFFFF;">
+                                <td scope="col"><b>From @num</b></td>
+                                <td>@elem.ToString()</td>
+                                <td style="text-align: center;">
+                                    @if (elem.HasDocument.Name.ToLower().Contains("ifc"))
+                                    {
+                                        var ifcGuid = (elem?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                        if (ifcGuid != null)
+                                        {
+                                            await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(elem.HasDocument.Guid, ifcGuid));
+                                        }
+                                        else
+                                        {
+                                            <button id="@elem.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@elem.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <button id="@elem.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@elem.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                    @{
+                        int num2 = 0;
+                        foreach (var elem in obj.ToElements)
+                        {
+                            num2++;
+                            <tr style="background-color: #F2F2F2;">
+                                <td scope="col" class="border-bottom-0"><b>To @num2</b></td>
+                                <td>@elem.ToString()</td>
+                                <td style="text-align: center;">
+                                    @if (elem.HasDocument.Name.ToLower().Contains("ifc"))
+                                    {
+                                        var ifcGuid = (elem?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                        if (ifcGuid != null)
+                                        {
+                                            await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(elem.HasDocument.Guid, ifcGuid));
+                                        }
+                                        else
+                                        {
+                                            <button id="@elem.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@elem.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <button id="@elem.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@elem.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            }
+            @if (Model.Link.IsLinkTypeOrSubtype(typeof(LsDirectedBinaryLink)))
+            {
+                var obj = Model.Link as LsDirectedBinaryLink;
+                <table class="table table-sm table-bordered">
+                    <tr class="bg-rub-blue text-white">
+                        <td scope="col"><b>Type</b></td>
+                        <td>@obj.EffectiveType</td>
+                        <td class="col-1" style="text-align: center;"></td>
+                    </tr>
+                    @{
+                        <tr style="background-color: #FFFFFF;">
+                            <td scope="col"><b>From</b></td>
+                            <td>@obj.FromElement.ToString()</td>
+                            <td style="text-align: center;">
+                                @if (obj.FromElement.HasDocument.Name.ToLower().Contains("ifc"))
+                                {
+                                    var ifcGuid = (obj.FromElement?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                    if (ifcGuid != null)
+                                    {
+                                        await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(obj.FromElement.HasDocument.Guid, ifcGuid));
+                                    }
+                                    else
+                                    {
+                                        <button id="@obj.FromElement.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.FromElement.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                }
+                                else
+                                {
+                                    <button id="@obj.FromElement.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.FromElement.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                }
+                            </td>
+                        </tr>
+                        <tr style="background-color: #F2F2F2;">
+                            <td scope="col"><b>To</b></td>
+                            <td>@obj.ToElement.ToString()</td>
+
+                            <td style="text-align: center;">
+                                @if (obj.ToElement.HasDocument.Name.ToLower().Contains("ifc"))
+                                {
+                                    var ifcGuid = (obj.ToElement?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                    if (ifcGuid != null)
+                                    {
+                                        await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(obj.ToElement.HasDocument.Guid, ifcGuid));
+                                    }
+                                    else
+                                    {
+                                        <button id="@obj.ToElement.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.ToElement.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                }
+                                else
+                                {
+                                    <button id="@obj.ToElement.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.ToElement.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+
+            }
+            @if (Model.Link.IsLinkTypeOrSubtype(typeof(LsDirected1ToNLink)))
+            {
+                var obj = Model.Link as LsDirected1ToNLink;
+                <table class="table table-sm table-bordered">
+                    <tr class="bg-rub-blue text-white">
+                        <td scope="col"><b>Type</b></td>
+                        <td>@obj.EffectiveType</td>
+                        <td class="col-1" style="text-align: center;"></td>
+                    </tr>
+                    @{
+                        <tr style="background-color: #FFFFFF;">
+                            <td scope="col"><b>From</b></td>
+                            <td>@obj.FromElement.ToString()</td>
+                            <td style="text-align: center;">
+                                @if (obj.FromElement.HasDocument.Name.ToLower().Contains("ifc"))
+                                {
+                                    var ifcGuid = (obj.FromElement?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                    if (ifcGuid != null)
+                                    {
+                                        await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(obj.FromElement.HasDocument.Guid, ifcGuid));
+                                    }
+                                    else
+                                    {
+                                        <button id="@obj.FromElement.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.FromElement.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                }
+                                else
+                                {
+                                    <button id="@obj.FromElement.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@obj.FromElement.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @{
+                        int num2 = 0;
+                        foreach (var elem in obj.ToElements)
+                        {
+                            num2++;
+                            <tr style="background-color: #F2F2F2;">
+                                <td scope="col" class="border-bottom-0"><b>To @num2</b></td>
+                                <td>@elem.ToString()</td>
+                                <td style="text-align: center;">
+                                    @if (elem.HasDocument.Name.ToLower().Contains("ifc"))
+                                    {
+                                        var ifcGuid = (elem?.HasIdentifier as LsStringBasedIdentifier)?.Identifier;
+                                        if (ifcGuid != null)
+                                        {
+                                            await Html.RenderPartialAsync("Controls/_IfcGuidButton_LinkDetails", new Tuple<string, string>(elem.HasDocument.Guid, ifcGuid));
+                                        }
+                                        else
+                                        {
+                                            <button id="@elem.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@elem.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <button id="@elem.HasDocument.Guid" class="btn btn-sm btn-link tab-clicker" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@elem.HasDocument.Guid')"><span class="oi oi-external-link"></span></button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            }
+        </section>
+    </div>
+    <div class="tab-pane" id="graph" role="tabpanel" aria-labelledby="graph-tab">
+        <section id="graph-section-@Model.Link.Guid" style="width: 100%;">
+            <div id="graph-container" style="width: 100%; height: 430px;" class="border border-rub-blue"></div>
+        </section>
+    </div>
+    <div class="tab-pane" id="json" role="tabpanel" aria-labelledby="json-tab">
+        <section id="json-section-@Model.Link.Guid" style="width: 100%;">
+            <textarea class="font-monospace w-100 small" style="height: 430px;">
+            @Html.Raw(Model.Link.ToJsonLDString())
+            </textarea>
+        </section>
+    </div>
+</div>
+
+

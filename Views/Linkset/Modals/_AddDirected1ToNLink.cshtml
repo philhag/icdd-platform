@@ -1,0 +1,184 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IcddWebApp.PageModels.Container.LinksetPageModel
+<!-- Modal Directed 1-To-N-->
+<div class="modal" id="modal-directed1ton-@Model.Linkset.Guid" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add directed 1-to-n link to container</h5>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body idReset">
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">Left</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="leftFormDir1N-@Model.Linkset.Guid">
+                                    <div class="input-group">
+                                        <span class="input-group-text required-asterisk" style="width:150px;">Document</span>
+                                        <select id="leftDocumentDir1N-@Model.Linkset.Guid" class="form-select" required>
+                                            @foreach (var doc in Model.Container.Documents)
+                                            {
+                                                <option value="@doc.Guid">@doc.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text required-asterisk" style="width:150px;">Identifier Type</span>
+                                        <select id="leftIdTypeDir1N-@Model.Linkset.Guid" class="form-select" onchange="toggleCheckLink(this.value, '@Model.Linkset.Guid', 'left', 'Dir1N')" required>
+                                            <option value="1" selected>StringBasedIdentifier</option>
+                                            <option value="0">No Identifier</option>
+                                            <option value="2">URIBasedIdentifier</option>
+                                            <option value="3">QueryBasedIdentifier</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <div id="leftStringBasedDir1N-@Model.Linkset.Guid" style="display:block;">
+                                            <div class="input-group">
+                                                <span class="input-group-text required-asterisk" style="width:150px;">Identifier</span>
+                                                <input type="text" id="leftIdentifierDir1N-@Model.Linkset.Guid" class="form-control" />
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text required-asterisk" style="width:150px;">Identifier Field</span>
+                                                <input type="text" id="leftIdentifierFieldDir1N-@Model.Linkset.Guid" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div id="leftUriBasedDir1N-@Model.Linkset.Guid" style="display:none;">
+                                            <div class="input-group">
+                                                <span class="input-group-text required-asterisk" style="width:150px;">URI</span>
+                                                <input type="url" id="leftUriDir1N-@Model.Linkset.Guid" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div id="leftQueryBasedDir1N-@Model.Linkset.Guid" style="display:none;">
+                                            <div class="input-group">
+                                                <span class="input-group-text required-asterisk" style="width:150px;">Query Expression</span>
+                                                <input type="text" id="leftQueryExpressionDir1N-@Model.Linkset.Guid" class="form-control" />
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text required-asterisk" style="width:150px;">Query Language</span>
+                                                <input type="text" id="leftQueryLanguageDir1N-@Model.Linkset.Guid" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <br />
+                                <button type="button" class="btn btn-sm btn-outline-light bg-rub-blue rounded-0 float-end" onclick="importIFCGuid('@Model.Linkset.Guid', 'left', 'Dir1N', false)">Import from selection</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">Right</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group" style="height:200px;">
+                                    <span class="input-group-text" style="width:150px;">Right Elements</span>
+                                    <div class="form-control overflow-scroll" style="max-height:200px;">
+                                        <ol id="rightElementsDir1N-@Model.Linkset.Guid" class="linkElements">
+                                        </ol>
+                                    </div>
+                                </div>
+                                <br />
+                                <hr />
+                                <h5 class="mb-0">Add Right Link Element</h5><br />
+                                <form id="rightFormDir1N-@Model.Linkset.Guid">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text required-asterisk" style="width:150px;">Document</span>
+                                        <select id="rightDocumentDir1N-@Model.Linkset.Guid" class="form-select">
+                                            @foreach (var doc in Model.Container.Documents)
+                                            {
+                                                <option value="@doc.Guid">@doc.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text required-asterisk" style="width:150px;">Identifier Type</span>
+                                        <select id="rightIdTypeDir1N-@Model.Linkset.Guid" class="form-select" onchange="toggleCheckLink(this.value, '@Model.Linkset.Guid', 'right', 'Dir1N')">
+                                            <option value="1" selected>StringBasedIdentifier</option>
+                                            <option value="0">No Identifier</option>
+                                            <option value="2">URIBasedIdentifier</option>
+                                            <option value="3">QueryBasedIdentifier</option>
+                                        </select>
+                                    </div>
+                                    <div id="rightStringBasedDir1N-@Model.Linkset.Guid" style="display:block;">
+                                        <div class="input-group">
+                                            <span class="input-group-text required-asterisk" style="width:150px;">Identifier</span>
+                                            <input type="text" id="rightIdentifierDir1N-@Model.Linkset.Guid" class="form-control" />
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text required-asterisk" style="width:150px;">Identifier Field</span>
+                                            <input type="text" id="rightIdentifierFieldDir1N-@Model.Linkset.Guid" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div id="rightUriBasedDir1N-@Model.Linkset.Guid" style="display:none;">
+                                        <div class="input-group">
+                                            <span class="input-group-text required-asterisk" style="width:150px;">URI</span>
+                                            <input type="url" id="rightUriDir1N-@Model.Linkset.Guid" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div id="rightQueryBasedDir1N-@Model.Linkset.Guid" style="display:none;">
+                                        <div class="input-group">
+                                            <span class="input-group-text required-asterisk" style="width:150px;">Query Expression</span>
+                                            <input type="text" id="rightQueryExpressionDir1N-@Model.Linkset.Guid" class="form-control" />
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text required-asterisk" style="width:150px;">Query Language</span>
+                                            <input type="text" id="rightQueryLanguageDir1N-@Model.Linkset.Guid" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <button type="button" class="btn btn-sm btn-rub-green rounded-0" onclick="AddLinkElement('@Model.Linkset.Guid', 'right', 'Dir1N')">Add Right LinkElement</button>
+                                    <button type="button" class="btn btn-sm btn-outline-light bg-rub-blue rounded-0 float-end" onclick="importIFCGuid('@Model.Linkset.Guid', 'right', 'Dir1N', true)">Import from selection</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">Link Specialization</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group">
+                                    <span class="input-group-text required-asterisk" style="width:150px;">Specialization</span>
+                                    <select id="specDir1N-@Model.Linkset.Guid" class="form-select" required>
+                                        <option value="specialises" selected>Specialises</option>
+                                        <option value="isspecialisedas">IsSpecialisedAs</option>
+                                        <option value="nospec">None</option>
+                                        <option value="haspart">HasPart</option>
+                                        <option value="hasmember">HasMember</option>
+                                        <option value="supersedes">Supersedes</option>
+                                        <option value="iselaboratedby">IsElaboratedBy</option>
+                                        <option value="controls">Controls</option>
+                                        <option value="ispartof">IsPartOf</option>
+                                        <option value="ismemberof">IsMemberOf</option>
+                                        <option value="issupervisedby">IsSupervisedBy</option>
+                                        <option value="elaborates">Elaborates</option>
+                                        <option value="iscontrolledby">IsControlledBy</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="required-asterisk-before">Required Field</div>
+                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+                <button name="btnPostDirected1NLink" type="submit" onclick="PostDirected1NLink('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@Model.Linkset.Guid')" class="btn btn-rub-blue rounded-0">Add</button>
+            </div>
+        </div>
+    </div>
+</div>

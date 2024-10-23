@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Http
+@model IcddWebApp.PageModels.Container.ContainerDeletePageModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Delete Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container pt-4" id="divContainer">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/List">Projects</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/Details/@Model.Project.Id">@Model.Project.Name</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/Details/@Model.Project.Id">Containers</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/@Model.Project.Id/Container/@Model.ContainerMetadata.Id/Index">@Model.ContainerMetadata.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Delete Container</li>
+        </ol>
+    </nav>
+    <div class="card panel-default rounded-0">
+        <div class="card-header rounded-0 fw-bold">
+            Delete Project <span class="font-monospace">@Model.ContainerMetadata.Name</span>
+        </div>
+        <div class="card-body rounded-0">
+            <div class="media">
+                <div class="row">
+                    <div class="col-2">
+                        <img class="img-fluid" style="width: 265px;" src="~/images/building_manipulate.png" alt="Generic placeholder image">
+                    </div>
+                    <div class="col-10">
+                        <p class="mt-0 fs-6 fw-bold">Do you really want to delete the container <span class="font-monospace">@Model.ContainerMetadata.Name</span>?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="media-body">
+                <a class="btn btn-rub-blue float-start rounded-0" href="~/Project/Details/@Model.Project.Id"><span class="oi oi-arrow-circle-left"></span> Back</a>
+                @using (Html.BeginForm("Delete", "Container", FormMethod.Post))
+                {
+                    @Html.Hidden("projId", Model.Project.Id)
+                    @Html.Hidden("id", Model.ContainerMetadata.Id)
+                    @Html.Hidden("containerVersion", Model.ContainerMetadata.Version)
+
+                    <input type="hidden" name="id" id="id" value="@Model.Project.Id" />
+                    <button type="submit" class="btn btn-danger float-end rounded-0">
+                        <span class="oi oi-trash" title="person" aria-hidden="true"></span> Delete
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

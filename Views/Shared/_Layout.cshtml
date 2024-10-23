@@ -1,0 +1,146 @@
+﻿@using System.Reflection
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Version = IcddWebApp.Version
+@inject IConfiguration Configuration
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ICDD Platform - @Context.Request.PathBase</title>
+    @{
+        string urlPath = Context.Request.Scheme + "://" + Context.Request.Host + Context.Request.PathBase;
+    }
+    <link rel="home" id="ApplicationRoot" href="@urlPath" />
+    <link rel="icon" type="image/vnd.microsoft.icon" href="~/favicon.ico">
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/lib/openiconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/cookie-consent-js/src/cookie-consent.css" rel="stylesheet" />
+    <link href="~/lib/jstree/dist/themes/default/style.min.css" rel="stylesheet" />
+    <link href="~/lib/toastr/build/toastr.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/toastr/build/toastr.min.js"></script>
+    <script type="text/javascript" src="~/lib/jstree/dist/jstree.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script type="text/javascript" src="~/lib/cookie-consent-js/src/cookie-consent.js"></script>
+    <script type="text/javascript" src="~/lib/bpmn-js/dist/bpmn-modeler.production.min.js"></script>
+    <script type="text/javascript" src="~/lib/vis-network/dist/vis-network.min.js"></script>
+
+    <script type="module" src="~/dist/viewer.bundle.js"></script>
+    <script type="module" src="~/dist/container.bundle.js"></script>
+    <script type="module" src="~/dist/graph.bundle.js"></script>
+    <script type="module" src="~/dist/linkset.bundle.js"></script>
+
+    <!-- Begin BASE_URLn -->
+    <script type="text/javascript">
+        window.BASE_URL = "@urlPath";
+    </script>
+    <!-- End BASE_URL -->
+    <!-- Begin Cookie Consent plugin -->
+    <script type="text/javascript">
+
+        var cookieConsent = new CookieConsent({ privacyPolicyUrl: "Contact" });
+        window.toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right-ext",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
+    <!-- End Cookie Consent plugin -->
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top shadow" style="height:70px; margin:0;">
+            <div class="container-fluid">
+                <a asp-action="Index" asp-controller="Page" class="navbar-brand">
+                    <img src="@Url.Content("~/images/logo_sw_E.png")" height="40" alt="">&nbsp; ICDD PLATFORM
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a asp-action="Index" asp-controller="Page" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="List" asp-controller="Project" class="nav-link">Projects</a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="Shapes" class="nav-link">Shapes</a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <a asp-action="Documentation" asp-controller="Page" class="nav-link">Documentation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Content("~/swagger/index.html")" class="nav-link" target="_blank">API</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="Contact" asp-controller="Page" class="nav-link">Contact</a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="Admin" class="nav-link">Admin Area</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <partial name="_LoginPartial" />
+                <img src="@Url.Content("~/images/Logo_RUB_schwarz_rgb.jpg")" height="20" alt="" class="float-end d-none d-md-inline">
+            </div>
+        </nav>
+    </header>
+    <main style="height:calc(100vh - 60px - 70px); overflow: auto; margin: 0;">
+        @{
+            if (!Configuration["closed"].Equals("true"))
+            {
+                @RenderBody()
+            }
+            else
+            {
+                IgnoreBody();
+                <h1>Maintenance Mode</h1>
+                <p>This website is currently under maintenance.</p>
+            }
+
+        }
+    </main>
+    <footer class="m-0 py-3 bg-secondary" style="position:fixed; bottom:0px; width: 100%; height:60px;">
+        <div class="container-fluid">
+            <span class="text-light float-end">
+
+                @{
+                    var ver = Version.GetVersionLink();
+                    var vers = Version.ShowVersion() ? "<a href='" + ver + "' target='blank' class='text-light'>Version</a>" : "";
+                }
+
+                <small>
+                    <a href="@Url.Action("Contact","Page")" class="text-light">Disclaimer</a> - @Html.Raw(vers) - Copyright @DateTime.Now.Year by <a href="@Url.Action("Contact", "Page")" class="text-light">Chair of Computing in Engineering, Ruhr University Bochum</a>
+                </small>
+            </span>
+            <div class="text-rub-blue w-50" id="taskbar"></div>
+        </div>
+    </footer>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

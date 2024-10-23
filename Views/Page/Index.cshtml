@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Start";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container pt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page">Start</li>
+        </ol>
+    </nav>
+    @*@Model.Result*@
+    <div class="bg-light rounded p-3 px-4">
+        <h1 class="display-2 pb-3">Toolkit for the <small class="text-muted">Information Container for linked Document Delivery</small></h1>
+        <div class="row row-eq-height">
+            <div class="col-3">
+                <div class="card" style="height: 100%;">
+                    <img class="card-img-top" src="~/images/building_upload.png" alt="Card image cap">
+                    <div class="card-header">
+                        <h6 class="card-title">Upload</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">You can upload your *.icdd files right now by clicking the link below and start a new session.</p>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card" style="height: 100%;">
+                    <img class="card-img-top" src="~/images/building_validate.png" alt="Card image cap">
+                    <div class="card-header">
+                        <h6 class="card-title">Validate</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Your file will be checked against conformance criteria delivered by the standard for the container in the active session. Validation performs SHACL Validation defined by ISO 21597-2:2020</p>
+                    </div>
+                    @*<div class="card-footer">
+                    <a asp-page="/action/ValidateContainer" class="btn btn-link"><span class="oi oi-circle-check"></span> Validate now</a>
+                </div>*@
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card" style="height: 100%;">
+                    <img class="card-img-top" src="~/images/building_explore.png" alt="Card image cap">
+                    <div class="card-header">
+                        <h6 class="card-title">View and Edit</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Explore the contents of your file and manipulate meta data online for the container in the active session. Viewer supports JsonLD of Semantic Data and IFC viewer. </p>
+                    </div>
+                    @*<div class="card-footer">
+                    <a asp-page="/action/ExploreContainer" class="btn btn-link"><span class="oi oi-magnifying-glass"></span> Explore now</a>
+                </div>*@
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card" style="height: 100%;">
+                    <img class="card-img-top" src="~/images/building_manipulate.png" alt="Card image cap">
+                    <div class="card-header">
+                        <h6 class="card-title">Export</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Export the container back into standardized container format.</p>
+                    </div>
+                    @*<div class="card-footer">
+                    <a asp-page="/action/ExploreContainer" class="btn btn-link"><span class="oi oi-magnifying-glass"></span> Explore now</a>
+                </div>*@
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                    <a href="~/Project/List" class="btn btn-rub-green d-block w-100">Open or create a project to start as a logged-in user</a>
+            </div>
+            <div class="col-12 mt-3">
+                <div class="card">
+                    <div class="card-header bg-rub-blue text-white"><b>Updates</b></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <video controls="controls" src="https://icdd.vm.rub.de/ontology/bcom/demonstration.m4v" style="width:800px;" class="img-thumbnail">
+                                    Your browser does not support the HTML5 Video element.
+                                </video>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted float-end">February 2022</p>
+                                <h4>Integrated SHACL validation</h4>
+                                Users can now use SHACL within containers for validation. SHACL shapes according <a href="https://www.w3.org/TR/shacl/" target="_blank">SHACL W3C Recommendation 20 July 2017</a> are supported.
+                                <hr />
+                                <p class="text-muted float-end">November 2021</p>
+                                <h4>Added support for MSSQL Database contents and R2RML mappings</h4>
+                                Users can now add MSSQL DBs into their containers and integrate data from these using <a href="https://www.w3.org/TR/r2rml/" target="_blank">R2RML</a> for generating Payload triples.
+                                <hr />
+                                <p class="text-muted float-end">September 2021</p>
+                                <h4>Integrated RDFS reasoning</h4>
+                                Users can now activate and deactivate RDFS reasoning for SPARQL querying. Reasoning is performed on all supplied ontology ressources.
+                                <hr />
+                                <p class="text-muted float-end">June 2021</p>
+                                <h4>Integrated payload triples management</h4>
+                                Users can now upload and manage payload triples and ontologies in their containers.
+                                <hr />
+                                <p class="text-muted float-end">May 2021</p>
+                                <h4>Integrated SPARQL query service into platform</h4>
+                                Users can now query all RDF-based data from containers, including from index files, from linksets and also from other payload triples.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+

@@ -1,0 +1,61 @@
+﻿@model IcddWebApp.PageModels.Container.ContainerPageModel
+
+
+@Html.Hidden("projectId", Model.Project.Id)
+@Html.Hidden("containerid", Model.ContainerMetadata.Id)
+@Html.Hidden("containerVersion", Model.ContainerMetadata.Version)
+<div class="row g-0 p-0 m-0">
+    <div class="col-12">
+        <div class="input-group mb-3">
+            <span class="input-group-text required-asterisk rounded-0 bg-rub-blue text-white" style="width:100px;" id="basic-addon2"><i class="oi oi-excerpt me-2"></i> Query</span>
+            <textarea id="sparql-query" name="query" class="form-control rounded-0 font-monospace" placeholder="Query" aria-label="Query" aria-describedby="basic-addon2" required style="height:200px; width:350px;">
+SELECT ?subject ?predicate ?object 
+WHERE { 
+?subject ?predicate ?object 
+}
+                </textarea>
+        </div>
+    </div>
+</div>
+<div class="float-end">
+    <div class="required-asterisk-before d-inline px-2">Required Field</div>
+    <button class="btn btn-rub-green rounded-0 d-inline" data-bs-toggle="modal" data-bs-target="#modalAddQuery" onclick="$('#sparql-query-name').val('');">Save query as...</button>
+    <button type="submit" class="btn btn-rub-blue rounded-0 d-inline" onclick="queryContainer('@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version','@Model.Project.Id')">Query</button>
+</div>
+<div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="chkApplyInference" onclick="toastr.info('Inference engine attached/detached','SPARQL query')" checked="checked">
+    <label class="form-check-label" for="chkApplyInference"><span class="small">RDFS Inference and generate lse:linked, lse:linkedEntity</span></label>
+</div>
+
+<div class="clearfix"></div>
+<hr />
+
+<div id="query-status" class="float-end"></div>
+<div id="query-results" class="float-end"></div>
+<div id="query-ifcguid" class="float-end" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" title="To enable highlighting of GUIDS, the query result requires exactly one variable 'ifcguid' that binds valid IFC GUIDS.">
+    <button type="button" class="btn btn-rub-blue btn-sm rounded-0" id="highlightGuidButton" disabled="disabled" onclick="queryGuidsFromJson(window.ifcguids)">Highlight IFC-GUIDS</button>
+</div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabular" type="button" role="tab" aria-controls="tabular" aria-selected="true">Tabular</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab" aria-controls="json" aria-selected="false">JSON</button>
+    </li>
+    <li>
+        <button class="nav-link" id="downloadCSV" role="tab" disabled>Download as .csv</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent" style="height:280px;">
+    
+    <div class="tab-pane fade show active  border rounded-0" id="tabular" role="tabpanel" aria-labelledby="tabular-tab" style="height: 280px;">
+        <div id="var-header" class="row bg-rub-blue text-white m-0 p-0 w-100"></div>
+        <div id="sparql-tabular-container" style="overflow-y: scroll; height: 254px;" class="m-0 p-0"></div>
+    </div>
+    <div class="tab-pane fade border rounded-0" id="json" role="tabpanel" aria-labelledby="json-tab" style="height: 280px;">
+        <textarea id="sparql-results" class="form-control border-0 mh-100" aria-describedby="basic-addon2" style="height: 280px;"></textarea>
+    </div>
+</div>
+
+

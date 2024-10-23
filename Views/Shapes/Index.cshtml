@@ -1,0 +1,88 @@
+﻿@using IcddWebApp.PageModels.Shapes
+@model IcddWebApp.PageModels.Shapes.ShapesPageModel
+
+@{
+    ViewBag.Title = "SHACL Shapes";
+}
+<div class="container pt-4 pb-5" id="ShapesOverview">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item active" aria-current="page">SHACL Shapes</li>
+        </ol>
+    </nav>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+            <a href="@Url.Action("Index")" type="button" class="btn btn-primary">Refresh</a>
+        </div>
+        @*<div class="btn-group me-2" role="group" aria-label="Second group">
+                <button type="button" class="btn btn-secondary">5</button>
+                <button type="button" class="btn btn-secondary">6</button>
+                <button type="button" class="btn btn-secondary">7</button>
+            </div>*@
+
+        @using (Html.BeginForm("UploadSHACLFile", "Shapes", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.Hidden("shapesFolderPath", Model.ShapesFolder)
+            <div class="btn-group" role="group" aria-label="Third group">
+                <div class="input-group">
+                    <input name="file" type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" accept=".ttl">
+                    <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04">Upload SHACL file</button>
+                </div>
+            </div>
+        }
+    </div>
+
+    @foreach (var info in Model.Shapes)
+    {
+        <div class="alert alert-secondary rounded-0 p-2 mt-2 clearfix">
+            <div class="d-flex w-100 justify-content-between mb-2">
+                <h4 class="mb-1 display-4">@info.FileInfo.Name</h4>
+                <small>Created: @info.FileInfo.CreationTime</small>
+            </div>
+            <details class="p-1 bg-secondary text-white">
+                <summary>Show Namespaces</summary>
+                <div class="list-group">
+                    @foreach (var prefix in info.ShapesGraph.NamespaceMap.Prefixes)
+                    {
+                        <a href="#" class="list-group-item list-group-item-action" aria-current="false">
+                            @prefix : @info.ShapesGraph.NamespaceMap.GetNamespaceUri(prefix)
+                        </a>
+                    }
+                </div>
+            </details>
+            <details class="p-1 bg-secondary text-white">
+                <summary>Show @info.ShapesGraph.NodeShapes().Count NodesShapes and @info.ShapesGraph.PropertyShapes().Count PropertyShapes</summary>
+                <div class="list-group">
+                    @foreach (var shape in info.ShapesGraph.NodeShapes())
+                    {
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-info" aria-current="false">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@shape</h5>
+                                <small>NodeShape</small>
+                            </div>
+                            @foreach (var triple in shape.TriplesWithSubject)
+                            {
+                                <small>@triple</small><br />
+                            }
+                        </a>
+                    }
+                    @foreach (var shape in info.ShapesGraph.PropertyShapes())
+                    {
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-primary" aria-current="false">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@shape</h5>
+                                <small>PropertyShape</small>
+                            </div>
+                            @foreach (var triple in shape.TriplesWithSubject)
+                            {
+                                <small>@triple</small><br />
+                            }
+                        </a>
+                    }
+                </div>
+            </details>
+            <a href="@Url.Content("shapefiles/"+info.FileInfo.Name)" download="" class="float-end">Download</a>
+        </div>
+    }
+</div>

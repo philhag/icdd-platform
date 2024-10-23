@@ -1,0 +1,28 @@
+﻿@using IcddWebApp.Services.Models
+@model IcddWebApp.PageModels.Shapes.ShapesPageModel
+
+@{
+    //Model.ContainerMetadata.SparqlQueries.Sort(delegate (SparqlQuery x, SparqlQuery y) { return y.GeneratedAt.CompareTo(x.GeneratedAt); });
+
+}
+
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white border">
+    <div class="p-3 link-dark text-decoration-none border-bottom bg-rub-blue text-white">
+        <i class="oi oi-clipboard me-2"></i>
+        <span class="fs-5 fw-semibold">Saved SHACL</span>
+    </div>
+
+    <div class="list-group list-group-flush border-bottom scrollarea">
+
+        @foreach (var shapeFile in Model.Shapes)
+        {
+        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
+            <small class="text-muted float-end">@shapeFile.FileInfo.CreationTime.ToShortDateString() @shapeFile.FileInfo.CreationTime.ToShortTimeString()</small>
+
+            <div id="shaclBtn-@shapeFile.FileInfo.Name" class="shaclBtnClass fw-bold" type="button" data-filename="@shapeFile.FileInfo.Name">@shapeFile.FileInfo.Name <span class="text-muted">[@shapeFile.Shapes.Count Shapes]</span></div>
+
+            <div id="shaclInput-@shapeFile.FileInfo.Name" style="display:none;">@shapeFile.RawData</div>
+        </a>
+        }
+    </div>
+</div>

@@ -1,0 +1,80 @@
+﻿@using VDS.RDF
+@using VDS.RDF.Nodes
+@model IcddWebApp.PageModels.Container.OntologyPageModel
+<div>
+    <div class="p-3">
+        <strong>Definition</strong><br />
+        <div class="row g-0 mb-1">
+            <div class="col-2">
+                BaseUri:
+            </div>
+            <div class="col-10">
+                <a href="@Model.Ontology.BaseUri" target="_blank">@Model.Ontology.BaseUri</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="p-3">
+        <strong>Namespaces</strong>
+        @foreach (var prefix in Model.Ontology.Namespaces.Prefixes)
+        {
+            <div class="row g-0">
+                <div class="col-2">
+                    @prefix
+                </div>
+                <div class="col-10">
+                    <a href="@Model.Ontology.Namespaces.GetNamespaceUri(prefix)" target="_blank">@Model.Ontology.Namespaces.GetNamespaceUri(prefix)</a>
+
+                </div>
+            </div>
+        }
+    </div>
+    <div class="p-3">
+        <strong>Metadata</strong><br />
+        @foreach (var x in @Model.Ontology.GetOntology().TriplesWithSubject)
+        {
+            <div class="row g-0 mb-1">
+                <div class="col-4 small">
+                    @if (Model.Ontology.Namespaces.ReduceToQName((x.Predicate as UriNode)?.Uri.AbsoluteUri, out string qname))
+                    {
+                        @qname
+                    }
+                    else
+                    {
+
+                        @x.Predicate.ToString()
+                    }
+                </div>
+                <div class="col-8 small">
+                    @{
+                        var string1 = "";
+                        switch (x.Object.NodeType)
+                        {
+                            case NodeType.Uri:
+                                Model.Ontology.Namespaces.ReduceToQName((x.Object as UriNode).Uri.AbsoluteUri, out string1);
+                                break;
+                            case NodeType.Blank:
+                                foreach (var stringValue in Model.Ontology.GetOntology().Graph.GetTriplesWithSubject(x.Object))
+                                {
+                                    string1 += stringValue.Object.ToString() + ", ";
+                                }
+                                break;
+                            case NodeType.Literal:
+                                string1 = x.Object.AsValuedNode().AsString();
+                                break;
+                            default:
+                                x.Object.ToString();
+                                break;
+
+                        }
+                    }
+                    @string1
+                </div>
+
+
+            </div>
+        }
+    </div>
+
+</div>
+

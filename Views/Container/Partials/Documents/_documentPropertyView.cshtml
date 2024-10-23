@@ -1,0 +1,156 @@
+﻿@using IIB.ICDD.Model.Container.ExtendedDocument
+@using IcddWebApp.Services.Models.Enums
+@model IcddWebApp.PageModels.Container.DocumentPageModel
+
+@{ var formUpdateContentId = "Form-" + Model.Metadata.Id + "-" + Model.ContainerMetadata.InternalId;
+   var isArchived = Model.ContainerMetadata.Status == ContainerStatus.ARCHIVED ? "disabled" : ""; }
+<form name="UpdateContent" id=@formUpdateContentId>
+    <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+        <tr>
+            <th colspan="2" scope="row" class="bg-rub-grey text-rub-blue" style="vertical-align: middle">Document</th>
+        </tr>
+        @if (Model.Document?.GetType() == typeof(ExtDatabaseLink))
+        {
+            <tr>
+                <td class="small">Connection String</td>
+                <td>
+                    @{ var connectionString = (Model.Document as ExtDatabaseLink)?.DbConnectionString;}
+                    <label name="DbConnectionString" class="rounded-0 form-control-sm">@connectionString?.Split(';').FirstOrDefault();... </label>
+                </td>
+            </tr>
+            <tr>
+                <td class="small required-asterisk">Database name</td>
+                <td>
+                    @{ var dbName = (Model.Document as ExtDatabaseLink)?.DbName;}
+                    <input type="text" name="Name" value=@dbName class="form-control rounded-0 form-control-sm" required @isArchived />
+                </td>
+            </tr>
+            <tr>
+                <td class="small">Database type</td>
+                <td>
+                    @{ var dbType = (Model.Document as ExtDatabaseLink)?.DbType;}
+                    <label name="DbType" class="rounded-0 form-control-sm">@dbType</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="small">Query Language</td>
+                <td>
+                    @{ var dbQueryLanguage = (Model.Document as ExtDatabaseLink)?.DbQueryLanguage;}
+                    <label name="DbQueryLanguage" class="rounded-0 form-control-sm">@dbQueryLanguage</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="small required-asterisk">Mapping file</td>
+                <td>
+                    <select name="MappingFile" class="form-select form-select-sm rounded-0" aria-label="MappingFile" @isArchived>
+                        <option value="">No mapping</option>
+                        @foreach (var doc in Model.Container.Documents.FindAll(doc => doc.FileType.Trim().ToLower().Contains("ttl") || doc.FileType.Trim().ToLower().Contains("rdf")))
+                        {
+                            @if (doc.Equals((Model.Document as ExtDatabaseLink)?.DbMapping))
+                            {
+                                <option value="@doc.Guid" selected>@doc.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@doc.Guid">@doc.Name</option>
+                            }
+
+                        }
+                    </select>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td class="small required-asterisk">File Name</td>
+                <td>
+                    @{ var fileEnd = Model.Metadata.Name.Split(".").Last();
+                        var regexName = @"(.*." + fileEnd + @"\b)";
+                        var nameTitle = "Name must end with '." + fileEnd + "'";}
+                    <input type="text" name="Name" value=@Model.Metadata.Name class="form-control rounded-0 form-control-sm" pattern=@regexName title="@nameTitle" required @isArchived />
+                </td>
+            </tr>
+            <tr>
+                <td class="small">Type</td>
+                <td>
+                    <label name="Type" class="rounded-0 form-control-sm">@Model.Metadata.Type</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="small required-asterisk">Description</td>
+                <td>
+                    <input type="text" name="Description" value=@Model.Metadata.Description class="form-control rounded-0 form-control-sm" required @isArchived />
+                </td>
+            </tr>
+            <tr>
+                <td class="small">Schema</td>
+                <td>
+                    <input type="text" name="Schema" value=@Model.Metadata.Schema class="form-control rounded-0 form-control-sm" @isArchived />
+                </td>
+            </tr>
+            <tr>
+                <td class="small">Schema Version</td>
+                <td>
+                    <input type="text" name="SchemaVersion" value=@Model.Metadata.SchemaVersion class="form-control rounded-0 form-control-sm" @isArchived />
+                </td>
+            </tr>
+            <tr>
+                <td class="small">Schema Subset</td>
+                <td>
+                    <input type="text" name="SchemaSubset" value=@Model.Metadata.SchemaSubset class="form-control rounded-0 form-control-sm" @isArchived />
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <th colspan="2" scope="row" class="bg-rub-grey text-rub-blue" style="vertical-align: middle">General</th>
+        </tr>
+        <tr>
+            <td class="small">Creator</td>
+            <td>
+                <label name="Creator" class="rounded-0 form-control-sm">@Model.Metadata.Creator</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small">Creation Date</td>
+            <td>
+                <label name="Created" class="rounded-0 form-control-sm">@Model.Metadata.Created.ToString()</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Modifier</span></td>
+            <td>
+                @if (Model.ContainerMetadata.Modifier != null)
+                {
+                    <label name="Modifier" class="rounded-0 form-control-sm">@Model.Metadata.Modifier</label>
+                }
+                else
+                {
+                    <label name="Modifier" class="rounded-0 form-control-sm"></label>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Modification Date</span></td>
+            <td>
+                <label name="Modified" class="rounded-0 form-control-sm">@Model.Metadata.Modified.ToString()</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Version</span></td>
+            <td>
+                <label name="Version" class="rounded-0 form-control-sm">@Model.Metadata.Version</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Version Description</span></td>
+            <td>
+                <label name="VersionDescription" class="rounded-0 form-control-sm">@Model.Metadata.VersionDescription</label>
+            </td>
+        </tr>
+    </table>
+    <div class="required-asterisk-before float-start">Required Field</div>
+    <div class="clearfix"></div>
+    <button class="btn btn-rub-green float-end rounded-0 mt-3" type="button" onclick="updateContent('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@Model.Metadata.Id', '@Model.ContainerMetadata.InternalId')" @isArchived><span class="oi oi-loop-square"></span> Update</button>
+</form>

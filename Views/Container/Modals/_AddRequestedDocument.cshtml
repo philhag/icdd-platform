@@ -1,0 +1,93 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IcddWebApp.PageModels.Container.ContainerPageModel
+
+@foreach (var document in Model.Container.ContainerDescription?.ContainsDocument.Where(x => x.Requested == true))
+{
+    <!-- Modal -->
+    <div class="modal" id="modalAddRequestedDocument-@document.Guid" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Upload a requested document</h5>
+                    <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="reqDoc-@document.Guid">
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width: 180px;" id="basic-addon2">Requested Mime Type</span>
+                            <input type="text" name="ReqMimeType" id="ReqMimeType" class="form-control" value=@document.FileFormat disabled />
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width: 180px;" id="basic-addon2">Requested Type</span>
+                            <input type="text" name="ReqFileExt" id="ReqFileExt" class="form-control" value=@document.FileType disabled />
+                        </div>
+
+                        <input type="hidden" name="projectId" value=@Model.Project.Id />
+                        <input type="hidden" name="containerId" value=@Model.ContainerMetadata.Id />
+                        <input type="hidden" name="containerVersion" value=@Model.ContainerMetadata.Version />
+                        <input type="hidden" name="contentId" value=@document.Guid />
+
+                        <hr />
+                        <div class="input-group mb-3">
+                            <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon2">File</span>
+                            <input type="file" name="uploadFile" id="uploadFile" class="form-control" accept="@document.FileFormat" onchange="suggestMimeTypeAndFileExt(this, '@document.Guid')" required />
+                        </div>
+
+                        <div class="input-group mb-3">
+                            @*<span class="input-group-text required-asterisk" style="width: 230px;" id="basic-addon2">Change to different file type</span>*@
+                            <div class="form-check form-switch ms-1">
+                                <input type="checkbox" name="changeType" id="changeType" class="form-check-input" onchange="ToggleReqDoc()" required />
+                                <label class="form-check-label h6" for="flexSwitchCheckDefault">Change to different file type</label>
+                            </div>
+                        </div>
+
+                        <div id="reqDocChange" style="display:none;">
+                            <div id="newFileExtSuggestion-@document.Guid" style="color: #17365C;"></div>
+                            <div id="newFileExtMessage-@document.Guid" style="color:red;"></div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon2">New File Extension</span>
+                                <input type="text" name="newFileExt" id="newFileExt" class="form-control" pattern="^[^.]+$" />
+                            </div>
+
+                            <div id="newMimeTypeSuggestion-@document.Guid" style="color: #17365C;"></div>
+                            <div id="newMimeTypeMessage-@document.Guid" style="color:red;"></div>
+                            <div id="reqDocChange" class="input-group mb-3">
+                                @{
+                                    var regexMimetype = @"^[-\w.]+/[-\w.+]+$";
+                                    var MimtepytTitle = "MimeType must be a valid mimetype, e.g. image/svg+xml.";
+                                }
+                                <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon2">New Mime Type</span>
+                                <input type="text" name="newMimeType" id="newMimeType" class="form-control" pattern=@regexMimetype title="@MimtepytTitle" />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="required-asterisk-before">Required Field</div>
+                        <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-rub-blue rounded-0" onclick="addRequestedDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@document.Guid')">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function ToggleReqDoc() {
+        if ($('#changeType').is(':checked')) {
+            $('#reqDocChange').show();
+            $('#newFileExt').prop('required', true);
+            $('#newMimeType').prop('required', true);
+        }
+        else {
+            $('#reqDocChange').hide();
+            $('#newFileExt').prop('required', false);
+            $('#newMimeType').prop('required', false);
+        }
+    }
+</script>

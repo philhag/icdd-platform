@@ -1,0 +1,706 @@
+@prefix ExtendedLinkset: <https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ns0: <http://purl.org/vocab/vann/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+dc:contributor
+  a owl:AnnotationProperty ;
+.
+dc:creator
+  a owl:AnnotationProperty ;
+.
+dc:description
+  a owl:AnnotationProperty ;
+.
+dc:issued
+  a owl:AnnotationProperty ;
+.
+dc:modified
+  a owl:AnnotationProperty ;
+.
+dc:rights
+  a owl:AnnotationProperty ;
+.
+dc:title
+  a owl:AnnotationProperty ;
+.
+ns0:preferredNamespacePrefix
+  a owl:AnnotationProperty ;
+.
+ns0:preferredNamespaceUri
+  a owl:AnnotationProperty ;
+.
+
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription>
+  a rdfs:Class ;
+  a owl:Class ;
+  a sh:NodeShape ;
+  sh:closed true ;
+  sh:ignoredProperties (
+      rdf:type
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#creationDate>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#createdBy>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#publishedBy>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#versionID>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#name>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#versionDescription>
+      rdfs:label
+    ) ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-checksum> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-checksumAlgorithm> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-conformanceIndicator> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-containsDocument> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-containsLinkset> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-creator> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-description> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-priorVersion> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-publisher> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-checksum>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksum> ;
+  sh:datatype xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-checksumAlgorithm>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksumAlgorithm> ;
+  sh:datatype xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-conformanceIndicator>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#conformanceIndicator> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-containsDocument>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#containsDocument> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-containsLinkset>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#containsLinkset> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-creator>
+  a sh:PropertyShape ;
+  sh:path dc11:creator ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Party> ;
+  sh:minCount 0 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-description>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#description> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-priorVersion>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#priorVersion> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription> ;
+  sh:minCount 0 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription-publisher>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#publisher> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription> ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document>
+  a sh:NodeShape ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-alternativeDocument> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-belongsToContainer> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-filetype> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-format> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-name> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-pending> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-priorVersion> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-alternativeDocument>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#alternativeDocument> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-belongsToContainer>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#belongsToContainer> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-filetype>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filetype> ;
+  sh:datatype xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-format>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#format> ;
+  sh:datatype xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-name>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#name> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-pending>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#pending> ;
+  sh:datatype xsd:boolean ;
+  sh:maxCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document-priorVersion>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#priorVersion> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document> ;
+  sh:minCount 0 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ExternalDocument>
+  a sh:NodeShape ;
+  sh:closed true ;
+  sh:ignoredProperties (
+      rdf:type
+      rdfs:label
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksum>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksumAlgorithm>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#url>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filename>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#foldername>
+    ) ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ExternalDocument-url> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ExternalDocument-url>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#url> ;
+  sh:datatype xsd:anyURI ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#FolderDocument>
+  a sh:NodeShape ;
+  sh:closed true ;
+  sh:ignoredProperties (
+      rdf:type
+      rdfs:label
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksum>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksumAlgorithm>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#url>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filename>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#foldername>
+    ) ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#FolderDocument-foldername> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#FolderDocument-foldername>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#foldername> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument>
+  a rdfs:Class ;
+  a owl:Class ;
+  a sh:NodeShape ;
+  sh:closed true ;
+  sh:ignoredProperties (
+      rdf:type
+      rdfs:label
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksum>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksumAlgorithm>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#belongsToContainer>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#url>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#format>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#createdBy>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#creationDate>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#requested>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#description>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#versionID>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#versionDescription>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filename>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#name>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#foldername>
+      ExtendedLinkset:ConflictsWith
+      ExtendedLinkset:Controls
+      ExtendedLinkset:Elaborates
+      ExtendedLinkset:HasMember
+      ExtendedLinkset:HasPart
+      ExtendedLinkset:IsAlternativeTo
+      ExtendedLinkset:IsControlledBy
+      ExtendedLinkset:IsElaboratedBy
+      ExtendedLinkset:IsIdenticalTo
+      ExtendedLinkset:IsMemberOf
+      ExtendedLinkset:IsPartOf
+      ExtendedLinkset:IsSpecialisedAs
+      ExtendedLinkset:IsSupersededBy
+      ExtendedLinkset:Specialises
+      ExtendedLinkset:Supersedes
+    ) ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument-belongsToContainer> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument-filename> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument-filetype> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument-belongsToContainer>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#belongsToContainer> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription> ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument-filename>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filename> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument-filetype>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filetype> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset>
+  a sh:NodeShape ;
+  sh:closed true ;
+  sh:ignoredProperties (
+      rdf:type
+      rdfs:label
+    ) ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset-filename> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset-priorVersion> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset-filename>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filename> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset-priorVersion>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#priorVersion> ;
+  sh:class <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset> ;
+  sh:minCount 0 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Party>
+  a sh:NodeShape ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Party-name> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Party-name>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#name> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#SecuredDocument>
+  a sh:NodeShape ;
+  sh:closed true ;
+  sh:ignoredProperties (
+      rdf:type
+      rdfs:label
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksum>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksumAlgorithm>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#url>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filename>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#foldername>
+    ) ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#SecuredDocument-checksum> ;
+  sh:property <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#SecuredDocument-checksumAlgorithm> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#SecuredDocument-checksum>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksum> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Container#SecuredDocument-checksumAlgorithm>
+  a sh:PropertyShape ;
+  sh:path <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksumAlgorithm> ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset>
+  dc11:rights "This ontology is part of ISO standard ISO 21597-1:2019" ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#BinaryLink>
+  a owl:Class ;
+  rdfs:comment "An ls:Link comprising exactly 2 individuals of class ls:LinkElement"@en-GB ;
+  rdfs:label "Binary link"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Link> ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality "2"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasLinkElement> ;
+    ] ;
+  owl:equivalentClass [
+      a owl:Class ;
+      owl:intersectionOf (
+          <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Link>
+          [
+            a owl:Restriction ;
+            owl:cardinality "2"^^xsd:nonNegativeInteger ;
+            owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasLinkElement> ;
+          ]
+        ) ;
+    ] ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink>
+  a rdfs:Class ;
+  a owl:Class ;
+  a sh:NodeShape ;
+  rdfs:comment "a subtype of a directed link (that has exactly 1 LinkElements) that uses the subproperties ls:hasFromLinkElement"@en-GB ;
+  rdfs:comment "an ls:Directed1toNLink is a subtype of ls:DirectedLink mandating exactly 1 ls:hasFromLinkElement"@en-GB ;
+  rdfs:label "Directed 1toN Link"@en-GB ;
+  rdfs:label "Directed1to NLink"@en-GB ;
+  rdfs:subClassOf rdfs:Resource ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedLink> ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasFromLinkElement> ;
+    ] ;
+  sh:closed true ;
+  sh:property ExtendedLinkset:ControlledBy ;
+  sh:property ExtendedLinkset:Controls ;
+  sh:property ExtendedLinkset:ElaboratedBy ;
+  sh:property ExtendedLinkset:Elaborates ;
+  sh:property ExtendedLinkset:HasMember ;
+  sh:property ExtendedLinkset:HasPart ;
+  sh:property ExtendedLinkset:IsMemberOf ;
+  sh:property ExtendedLinkset:IsPartOf ;
+  sh:property ExtendedLinkset:IsSpecialisedAs ;
+  sh:property ExtendedLinkset:IsSupersededBy ;
+  sh:property ExtendedLinkset:Specialises ;
+  sh:property ExtendedLinkset:Supersedes ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedBinaryLink>
+  a rdfs:Class ;
+  a owl:Class ;
+  a sh:NodeShape ;
+  rdfs:comment "a subtype of a binary link (that has exactly 2 LinkElements) that uses the subproperties ls:hasFromLinkElement and ls:hasToLinkElement to denote a direction of this link"@en-GB ;
+  rdfs:label "Directed binary link"@en-GB ;
+  rdfs:subClassOf rdfs:Resource ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#BinaryLink> ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedLink> ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasFromLinkElement> ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasToLinkElement> ;
+    ] ;
+  sh:closed true ;
+  sh:property ExtendedLinkset:ConflictsWith ;
+  sh:property ExtendedLinkset:IsAlternativeTo ;
+  sh:property ExtendedLinkset:IsIdenticalTo ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedLink>
+  a owl:Class ;
+  rdfs:comment "An ls:Link that uses the subproperties ls:hasFromLinkElement and ls:hasToLinkElement to denote a direction of this link"@en-GB ;
+  rdfs:label "Directed link"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Link> ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasFromLinkElement> ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasToLinkElement> ;
+    ] ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Identifier>
+  a owl:Class ;
+  rdfs:comment "An abstract class for identification of an element within a document; in cases where an identifier may be computed, this shall be managed by the implementer since no method is specified in this standard"@en-GB ;
+  rdfs:label "Identifier"@en-GB ;
+  rdfs:subClassOf owl:Thing ;
+  owl:disjointUnionOf (
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#QueryBasedIdentifier>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#StringBasedIdentifier>
+      <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#URIBasedIdentifier>
+    ) ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Link>
+  a owl:Class ;
+  rdfs:comment "A grouping of 1 or more instances of  ls:LinkElement"@en-GB ;
+  rdfs:label "Link"@en-GB ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:minCardinality "2"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasLinkElement> ;
+    ] ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#LinkElement>
+  a owl:Class ;
+  rdfs:comment "A class for referencing to a document or to an element in a document"@en-GB ;
+  rdfs:label "Link element"@en-GB ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onClass <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Identifier> ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasIdentifier> ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:onClass <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document> ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasDocument> ;
+      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+    ] ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#QueryBasedIdentifier>
+  a owl:Class ;
+  rdfs:comment "the query resulting in an identifier"@en-GB ;
+  rdfs:label "Query based identifier"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Identifier> ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#queryExpression> ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#queryLanguage> ;
+    ] ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#StringBasedIdentifier>
+  a owl:Class ;
+  rdfs:comment "identification of an element within a document via a String ID"@en-GB ;
+  rdfs:label "String based identifier"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Identifier> ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#identifier> ;
+    ] ;
+  rdfs:subClassOf [
+      a owl:Restriction ;
+      owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#identifierField> ;
+    ] ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#URIBasedIdentifier>
+  a owl:Class ;
+  rdfs:comment "URI-based identifier for a document, or element within a document, that is located on the web"@en-GB ;
+  rdfs:label "URI based identifier"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Identifier> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasDocument>
+  a owl:ObjectProperty ;
+  rdfs:comment "a reference from a ls:LinkElement to a ct:Document"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#LinkElement> ;
+  rdfs:label "has document"@en-GB ;
+  rdfs:range <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasFromLinkElement>
+  a owl:ObjectProperty ;
+  rdfs:comment "a relation from an ls:Link to an ls:LinkElement. It is a sub property of ls:hasLinkElement"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedLink> ;
+  rdfs:label "has from link element"@en-GB ;
+  rdfs:range <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#LinkElement> ;
+  rdfs:subPropertyOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasLinkElement> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasIdentifier>
+  a owl:ObjectProperty ;
+  rdfs:comment "a relation from ls:LinkElement to an ls:Identifier"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#LinkElement> ;
+  rdfs:label "has identifier"@en-GB ;
+  rdfs:range <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Identifier> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasLinkElement>
+  a owl:ObjectProperty ;
+  rdfs:comment "a relation from an ls:Link to an ls:LinkElement"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Link> ;
+  rdfs:label "has link element"@en-GB ;
+  rdfs:range <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#LinkElement> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasToLinkElement>
+  a owl:ObjectProperty ;
+  rdfs:comment "a relation from an ls:Link to an ls:LinkElement. It is a sub property of ls:hasLinkElement"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedLink> ;
+  rdfs:label "has to link element"@en-GB ;
+  rdfs:range <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#LinkElement> ;
+  rdfs:subPropertyOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasLinkElement> ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#identifier>
+  a owl:DatatypeProperty ;
+  a owl:FunctionalProperty ;
+  rdfs:comment "a datatype String property containing the actual ID string"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#StringBasedIdentifier> ;
+  rdfs:label "identifier"@en-GB ;
+  rdfs:range xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#identifierField>
+  a owl:DatatypeProperty ;
+  a owl:FunctionalProperty ;
+  rdfs:comment "a String datatype for defining the field(s) where the identifier can be found; in cases where the identifier is composed of multiple fields, the implementer shall choose the syntax rules"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#StringBasedIdentifier> ;
+  rdfs:label "identifier field"@en-GB ;
+  rdfs:range xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#queryExpression>
+  a owl:DatatypeProperty ;
+  a owl:FunctionalProperty ;
+  rdfs:comment "the query resulting into an identifier"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#QueryBasedIdentifier> ;
+  rdfs:label "query expression"@en-GB ;
+  rdfs:range xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#queryLanguage>
+  a owl:DatatypeProperty ;
+  a owl:FunctionalProperty ;
+  rdfs:comment "a query lanugage specification"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#QueryBasedIdentifier> ;
+  rdfs:label "query language"@en-GB ;
+  rdfs:range xsd:string ;
+.
+<https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#uri>
+  a owl:DatatypeProperty ;
+  a owl:FunctionalProperty ;
+  rdfs:comment "an URI for referring to a document"@en-GB ;
+  rdfs:domain <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#URIBasedIdentifier> ;
+  rdfs:label "uri"@en-GB ;
+  rdfs:range xsd:anyURI ;
+.
+<https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset>
+  a <http://purl.org/vocommons/voaf#Vocabulary> ;
+  a owl:Ontology ;
+  dc:creator [
+      a foaf:Organization ;
+      foaf:Email "copyright@iso.org" ;
+      foaf:Fax "+41 22 749 09 47" ;
+      foaf:Phone "+41 22 749 01 11" ;
+      foaf:address "ISO copyright office CP 401, Ch. de Blandonnet 8, CH-1214 Vernier, Geneva" ;
+      foaf:name "ISO" ;
+      foaf:website "http://www.iso.org" ;
+    ] ;
+  dc:description "ISO 21597 Part 2 gives a specification for more semantic relations as specializations of the generic relations of Part 1 between documentes or entries within documents within a container."@en-GB ;
+  dc:issued "2020-01-01" ;
+  dc:modified "2020-01-01" ;
+  dc:title "The ISO 21597 ICDD Part 2 Extended Linkset ontology."@en-GB ;
+  ns0:preferredNamespacePrefix "els" ;
+  ns0:preferredNamespaceUri <https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset> ;
+  owl:imports <http://datashapes.org/dash> ;
+  owl:imports <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> ;
+  owl:imports <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.shapes> ;
+  owl:imports <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+  owl:versionInfo "v1.0" ;
+.
+ExtendedLinkset:ConflictsWith
+  a owl:Class ;
+  rdfs:label "Conflicts with"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedBinaryLink> ;
+  skos:definition "This link type relates two link elements that conflict with one another in some way. Possibly non-transitive, symmetric and being its own inverse" ;
+.
+ExtendedLinkset:Controls
+  a owl:Class ;
+  rdfs:label "Controls"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "This link type relates one link element to one or more other link elements over which it exercises some type of control. Possibly transitive, non-symmetric and inverse of IsControlledBy" ;
+.
+ExtendedLinkset:Doc2
+  a ExtendedLinkset:DirectedBinaryLink ;
+  ExtendedLinkset:ConflictsWith ExtendedLinkset:Doc3 ;
+  ExtendedLinkset:improperlink ExtendedLinkset:Doc4 ;
+.
+ExtendedLinkset:Document1
+  ExtendedLinkset:ConflictsWith ExtendedLinkset:Document2 ;
+  ExtendedLinkset:ImproperExtension ExtendedLinkset:Document3 ;
+.
+ExtendedLinkset:Elaborates
+  a owl:Class ;
+  rdfs:label "Elaborates"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "Possibly transitive, non-symmetric and inverse of IsElaboratedBy" ;
+.
+ExtendedLinkset:HasMember
+  a owl:Class ;
+  rdfs:label "Has member"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "This link type relates one link element to one or more other link elements to form a grouping based on some consistent criteria. Possibly non-transitive, non-symmetric and inverse of IsMemberOf" ;
+.
+ExtendedLinkset:HasPart
+  a owl:Class ;
+  rdfs:label "Has part"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "This link type relates one link element to one or more other link elements to form an assembly of parts where those parts exist independently. Possibly transitive, non-symmetric and inverse of IsPartOf" ;
+.
+ExtendedLinkset:IsAlternativeTo
+  a owl:Class ;
+  rdfs:label "Is alternative to"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedBinaryLink> ;
+  skos:definition "This link type relates two link elements where one is an alternative to the other. Possibly transitive, symmetric and being its own inverse" ;
+.
+ExtendedLinkset:IsControlledBy
+  a owl:Class ;
+  rdfs:label "Is controlled by"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "Possibly transitive, non-symmetric and inverse of Controls" ;
+.
+ExtendedLinkset:IsElaboratedBy
+  a owl:Class ;
+  rdfs:label "Is elaborated by"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "This link type relates one link element to one or more other link elements where they provide further explanation, reasoning, derivation, information or usage. Possibly transitive, non-symmetric and inverse of IsElaboratedBy" ;
+.
+ExtendedLinkset:IsIdenticalTo
+  a owl:Class ;
+  rdfs:label "Is identical to"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedBinaryLink> ;
+  skos:definition "This link type relates two link elements that are identical but may be represented in different ways. Possibly transitive, symmetric and being its own inverse" ;
+.
+ExtendedLinkset:IsMemberOf
+  a owl:Class ;
+  rdfs:label "Is member of"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "Possibly non-transitive, non-symmetric and inverse of HasMember" ;
+.
+ExtendedLinkset:IsPartOf
+  a owl:Class ;
+  rdfs:label "Is part of"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "Possibly transitive, non-symmetric and inverse of HasPart" ;
+.
+ExtendedLinkset:IsSpecialisedAs
+  a owl:Class ;
+  rdfs:label "Is specialised as"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "This link type relates one link element to one or more other link elements that are specializations or sub-classes. Possibly transitive, non-symmetric and inverse of Specialises" ;
+.
+ExtendedLinkset:IsSupersededBy
+  a owl:Class ;
+  rdfs:label "Is superseded by"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "Possibly transitive, non-symmetric and inverse of Supersedes" ;
+.
+ExtendedLinkset:Specialises
+  a owl:Class ;
+  rdfs:label "Specialises"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "Possibly transitive, non-symmetric and inverse of IsSpecialisedAs" ;
+.
+ExtendedLinkset:Supersedes
+  a owl:Class ;
+  rdfs:label "Supersedes"@en-GB ;
+  rdfs:subClassOf <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink> ;
+  skos:definition "This link type relates one link element to one or more other link elements where they are a development of or supersede it in some way. Possibly transitive, non-symmetric and inverse of IsSupersededBy" ;
+.

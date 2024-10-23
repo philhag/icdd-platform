@@ -1,0 +1,94 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IcddWebApp.PageModels.Container.ContainerUploadPageModel
+@using IcddWebApp.PageModels.Container
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Container Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="container pt-4" id="UploadForm">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/Project/List">Projects</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/Details/@Model.Project.Id">@Model.Project.Name</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/Details/@Model.Project.Id">Containers</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Upload Container</li>
+        </ol>
+    </nav>
+    <form method="post" enctype="multipart/form-data">
+        <div class="card panel-default rounded-0">
+            <div class="card-header rounded-0 fw-bold">
+                Upload Container to Project: @Model.Project.Name
+            </div>
+            <div class="card-body rounded-0">
+                <div class="media">
+                    <div class="row">
+                        <div class="col-3">
+                            <img class="img-fluid" style="width: 265px;" src="~/images/building_upload.png" alt="Generic placeholder image">
+                        </div>
+                        <div class="col-9">
+                            <p class="mt-0 fs-6 fw-bold">Upload a container file according to ISO 21597 ICDD</p>
+                            <div class="media-body">
+                                @{
+                                    switch (Model.UploadResult)
+                                    {
+                                        case UploadResult.NoFile:
+                                            <div class="alert alert-danger rounded-0" role="alert">
+                                                <p><span class="oi oi-warning" title="person" aria-hidden="true"></span> You have not chosen a file for upload.</p>
+                                            </div>
+                                            break;
+                                        case UploadResult.None:
+
+                                            <input type="file" name="Upload" id="Upload" asp-for="Upload" class="form-control" style="width: 100%" accept=".icdd" />
+                                            @Html.HiddenFor(m => m.ProjectGuid)
+
+                                            break;
+                                        case UploadResult.Invalid:
+                                            <div class="alert alert-warning rounded-0" role="alert">
+                                                <p><span class="oi oi-warning" title="person" aria-hidden="true"></span> Your file is not an *.icdd file. Please try a different one.</p>
+                                            </div>
+                                            break;
+                                        case UploadResult.Success:
+                                            <div class="alert alert-success rounded-0" role="alert">
+                                                <p>You successfully uploaded the file: @Model.Upload.FileName.</p>
+                                            </div>
+
+                                            break;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                @{
+                    switch (Model.UploadResult)
+                    {
+                        case UploadResult.NoFile:
+                            <a class="btn btn-danger float-end rounded-0" href="~/Project/@Model.Project.Id/Container/Upload"><span class="oi oi-arrow-circle-left"></span> Return</a>
+                            break;
+                        case UploadResult.None:
+                            <a class="btn btn-rub-blue float-start rounded-0" href="~/Project/Details/@Model.Project.Id"><span class="oi oi-arrow-circle-left"></span> Back</a>
+                            <button type="submit" class="btn btn-rub-green float-end rounded-0"> <span class="oi oi-data-transfer-upload" title="person" aria-hidden="true"></span> Upload</button>
+                            break;
+                        case UploadResult.Invalid:
+                            <a class="btn btn-warning float-end rounded-0" href="~/Project/@Model.Project.Id/Container/Upload"><span class="oi oi-arrow-circle-left"></span> Return</a>
+                            break;
+                        case UploadResult.Success:
+                            //if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("FilePath")))
+                            if (Model.ContainerMetadata != null)
+                            {
+                                string queryString = "~/Project/" + Model.Project.Id + "/Container/" + Model.ContainerMetadata.Id + "/" + Model.ContainerMetadata.Version + "/Index";
+                                <a class="btn btn-rub-green float-end rounded-0" href="@Url.Content(queryString)"><span class="oi oi-arrow-circle-right"></span> View Import</a>
+                            }
+                            break;
+                    }
+                }
+            </div>
+        </div>
+    </form>
+</div>

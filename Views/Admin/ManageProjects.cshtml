@@ -1,0 +1,215 @@
+﻿@model IcddWebApp.PageModels.Admin.ManageProjectsPageModel
+@{
+    ViewData["Title"] = "Manage Projects";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 pb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Admin/#">Admin</a></li>
+            <li class="breadcrumb-item" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <h5 class="display-6">Admin Area</h5>
+    <hr />
+    <div class="row">
+        <div class="col-2">
+            @{
+                await Html.RenderPartialAsync("_AdminAreaNav", Model);
+            }
+
+        </div>
+        <div class="col-9">
+            <h4>@ViewData["Title"]</h4>
+
+            <table class="table table-striped small">
+                <thead class="bg-rub-blue text-white">
+                    <tr class="bg-rub-blue text-white">
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Modified</th>
+                        <th scope="col">Containers</th>
+                        <th scope="col">Users</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var project in Model.AllProjects.OrderBy(x => x.Name))
+                        {
+                            <tr>
+                                <td>@project.Id</td>
+                                <td>@project.Name</td>
+                                <td>@project.Created</td>
+                                <td>@project.Modified</td>
+                                <td>
+                                    @Html.DropDownList("containers", new SelectList(project.Containers, "Id", "Name"), new { @class = "form-control rounded-0 form-control-sm" })
+                                </td>
+
+
+                                <td>
+                                    @Html.DropDownList("users", new SelectList(project.Users, "Id", "UserName"), new { @class = "form-control rounded-0 form-control-sm" })
+                                </td>
+                                <td>
+                                    <div class="float-end">
+                                        <button class="btn btn-outline-info btn-sm rounded-0 btn-block float-none" data-bs-toggle="modal" data-bs-target="#modalUpdateProject-@project.Id"><span class="oi oi-pencil"></span></button>
+                                        <button class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none" data-bs-toggle="modal" data-bs-target="#modalDeleteProject-@project.Id"><span class="oi oi-trash"></span></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Modal -->
+                            <div class="modal" id="modalDeleteProject-@project.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Delete project</h5>
+                                            <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        @using (Html.BeginForm("DeleteProject", "Admin", FormMethod.Post))
+                                        {
+                                            <div class="modal-body">
+                                                @Html.Hidden("id", project.Id)
+                                                <div class="input-group mb-3">
+                                                    <label>Are you sure you want to delete project '<b>@project.Name</b>' and all of its containers?</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger rounded-0">Delete</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal" id="modalUpdateProject-@project.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Update project <b>@project.Name (<i>@project.Id</i>)</b></h5>
+                                            <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        @using (Html.BeginForm("UpdateProject", "Admin", FormMethod.Post))
+                                        {
+                                            <div class="modal-body">
+                                                @Html.Hidden("projectId", project.Id)
+                                                @Html.Hidden("username", User.Identity.Name)
+                                                <div class="form-group mb-3">
+                                                    @Html.Label("Project Name")
+                                                    @Html.TextBox("projectName", project.Name, new { @class = "form-control rounded-0 form-control-sm", required = "required" })
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-rub-green rounded-0">Update</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </tbody>
+            </table>
+            @using (Html.BeginForm("AddProject", "Admin", FormMethod.Post))
+            {
+                <div class="float-end">
+                    <div class="input-group rounded-0">
+                        <label for="projectName" class="visually-hidden">Project Name</label>
+                        @*<input name="projectName" type="text" class="form-control form-control-sm rounded-0 border  border-rub-blue" id="projectName" placeholder="Project name">*@
+                        @Html.TextBox("projectName", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter project name" })
+                        <div class="input-group-append">
+                            <button class="btn btn-rub-green btn-sm rounded-0" type="submit">Create Project</button>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+            <h4>Actions</h4>
+            <div class="row">
+                <div class="col-4">
+                    @using (Html.BeginForm("AddUserToProject", "Admin", FormMethod.Post))
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="display-8">Add User to Project</h5>
+                            </div>
+                            <div class="card-body">
+                                <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+                                    <tr>
+                                        <td class="small">Username</td>
+                                        <td>
+                                            @*@Html.TextBox("username", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter username" })*@
+                                            @Html.DropDownList("username", new SelectList(Model.AllUsers, "UserName", "UserName"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="small">Project name</td>
+                                        <td>
+                                            @*@Html.TextBox("rolename", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter role name" })*@
+                                            @Html.DropDownList("projectId", new SelectList(Model.AllProjects, "Id", "Name"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-rub-green btn-sm rounded-0 float-end" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-1"></div>
+                <div class="col-4">
+                    @using (Html.BeginForm("RemoveUserFromProject", "Admin", FormMethod.Post))
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="display-8">Remove User from Project</h5>
+                            </div>
+                            <div class="card-body">
+                                <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+                                    <tr>
+                                        <td class="small">Username</td>
+                                        <td>
+                                            @*@Html.TextBox("username", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter username" })*@
+                                            @Html.DropDownList("username", new SelectList(Model.AllUsers, "UserName", "UserName"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="small">Project name</td>
+                                        <td>
+                                            @*@Html.TextBox("rolename", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter role name" })*@
+                                            @Html.DropDownList("projectId", new SelectList(Model.AllProjects, "Id", "Name"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-danger btn-sm rounded-0 float-end" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("[href]").each(function () {
+            if (this.href == window.location.href) {
+                $(this).addClass("active bg-rub-green text-dark");
+            }
+        });
+    });
+
+</script>

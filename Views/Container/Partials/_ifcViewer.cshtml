@@ -1,0 +1,139 @@
+﻿@model IcddWebApp.PageModels.Container.ContainerPageModel
+<head>
+    <style>
+        ul {
+            list-style: none;
+        }
+
+        .context-menu {
+            position: absolute;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgb(64 64 64 / 5%);
+            padding: 10px 0;
+        }
+
+            .menu > li > a {
+                font: inherit;
+                border: 0;
+                padding: 10px 30px 10px 15px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                position: relative;
+                text-decoration: unset;
+                color: #000;
+                font-weight: 500;
+                transition: 0.5s linear;
+                -webkit-transition: 0.5s linear;
+                -moz-transition: 0.5s linear;
+                -ms-transition: 0.5s linear;
+                -o-transition: 0.5s linear;
+            }
+
+                .menu > li > a:hover {
+                    background: #f1f3f7;
+                    color: #4b00ff;
+                }
+
+                .menu > li > a > i {
+                    padding-right: 10px;
+                }
+
+            .menu > li.trash > a:hover {
+                color: red;
+            }
+    </style>
+</head>
+<div id="contextMenu" class="context-menu" style="display: none; z-index: 2">
+    <ul class="menu">
+        <li id="contextMenuCopyGuid"><a href="#"><i class="fa fa-share" aria-hidden="true"></i> Copy Element GUID</a></li>
+        <li id="contextMenuGenerateSPARQL"><a href="#"><i class="fa fa-pencil" aria-hidden="true"></i> Generate SPARQL-Query</a></li>
+    </ul>
+</div>
+<div id="viewer-container" class="bg-white" style="z-index: 1">
+        <div style="position: relative; right: 0px; top: 0px;" class="p-0 m-0">
+            <div id="div-loading-model" class="spinner-border text-rub-blue align-content-center" role="status" style="position: absolute; top: 10px; left: 10px;"><span class="visually-hidden">Querying...</span></div>
+
+            <canvas id="xBIM-viewer" class="p-0 m-0 border" style="height: 400px; width: 100%;"></canvas>
+
+            <div id="viewer-toolbox-oncanvas" style="position: absolute; bottom: 15px; left: 10px;" class="btn-group">
+                <input class="btn-check" type="checkbox" id="btn-resize" onchange="resizeViewer(this)">
+                <label class="btn btn-outline-secondary btn-sm" for="btn-resize"><span class="oi oi-resize-both"></span></label>
+
+                <input class="btn-check" type="checkbox" id="isolate-checkbutton" onchange="isolateSelected(this)">
+                <label class="btn btn-outline-success btn-sm" for="isolate-checkbutton">Transparency mode</label>
+                <select id="camera-navigationMode-dropdown" onchange="setNavigationMode(this)">
+                    <option>Pan</option>
+                    <option>Zoom</option>
+                    <option selected="selected">Orbit</option>
+                    <option>Free-Orbit</option>
+                    <option>None</option>
+                </select>
+                <button id="resetViewer" class="btn btn-rub-blue btn-sm" onclick="resetCamera()">Reset viewer</button>
+            </div>
+        </div>
+    </div>
+<div id="placeholder-container"></div>
+    @*<div id="viewer-toolbox" class="p-1 bg-light mb-2 m-0 border small">
+        <div class="row d-flex">
+            <div class="col-auto fw-bold d-flex">
+                <div class="align-self-center">Options:</div>
+            </div>
+            <div class="col-auto d-flex">
+                <div class="form-check form-switch align-self-center">
+                    <input class="form-check-input" type="checkbox" id="isolate-checkbox" onchange="isolateSelected(this)">
+                    <label class="form-check-label" for="isolate-checkbox">Model transparency</label>
+                </div>
+            </div>
+            <div class="col-auto ms-auto">
+            </div>
+        </div>
+    </div>*@
+    <div class="p-1">
+        <div class="row">
+            <div class="col-10"><b>Model</b></div>
+            <div class="col-auto ms-auto"><b>Visibility</b></div>
+            @*<div class="col-4"><b>Id</b></div>*@
+        </div>
+        @*<div class="col-4" id="model-id-@ifcFile.Guid"></div>*@
+    </div>
+    @foreach (var ifcFile in Model.Container.Documents.FindAll(m => m.FileType.ToLower().Contains("ifc")))
+    {
+        <script>
+    $(function () {
+        loadModelWithMapping('@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@ifcFile.Guid', '@Model.Project.Id');
+    });
+        </script>
+        <div id="modelList" class="p-1">
+            <div class="row">
+                <div class="col-10" id="@ifcFile.Guid">
+                    @ifcFile.Name
+                </div>
+                <div class="col-auto ms-auto">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="load-@ifcFile.Guid" onchange="hideModel('@Model.Container.Documents.FindAll(m => m.FileType.ToLower().Contains("ifc")).IndexOf(ifcFile)', this)" checked>
+                        <label class="form-check-label visually-hidden" for="load-@ifcFile.Guid">Visible</label>
+                    </div>
+                </div>
+                @*<div class="col-4" id="model-id-@ifcFile.Guid"></div>*@
+            </div>
+        </div>
+        <div class="border p-1">
+            <table id="selectedGuidTable-@ifcFile.Guid" class="table custom-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Label</th>
+                        <th scope="col">GUID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    }

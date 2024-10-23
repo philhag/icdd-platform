@@ -1,0 +1,176 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IcddWebApp.PageModels.Container.ContainerPageModel
+@{
+    ViewData["Title"] = "Container Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<script>
+    window.project = "@Model.Project.Id";
+    window.container = "@Model.Container.ContainerGuid";
+    window.containerMeta = "@Model.ContainerMetadata.Id";
+    window.containerVersion = "@Model.Container.VersionID";
+</script>
+<script type="module" src="~/dist/viewer.bundle.js"></script>
+<script type="module" src="~/dist/container.bundle.js"></script>
+
+<div class="container-fluid pt-4" id="ContainerOverview">
+    <div class="float-end display-6 text-success py-2">AM Maintenance MODE <img src="https://www.inf.bi.ruhr-uni-bochum.de/iib/mam/images/forschung/resize_250_619_on_5babb3d51dfaae83d7e99a908d426282_bim4ams-logo_ls_3_2.jpg" style="height:64px;" /></div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/Page/Index">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/List">Projects</a></li>
+            <li class="breadcrumb-item active"><a href="~/Project/Details/@Model.Project.Id">@Model.Project.Name</a></li>
+            <li class="breadcrumb-item active"><a href="~/Project/Details/@Model.Project.Id">Containers</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.ContainerMetadata.Name  (Maintenance Container View)</li>
+        </ol>
+    </nav>
+    <div class="container-fluid row align-content-around p-0 m-0">
+        <div class="col-3 p-0 pe-3" id="divExplorer">
+            <div class="card rounded-0 w-100 shadow">
+                <div class="card-header bg-secondary text-white rounded-0">
+                    <h5 class="card-title rounded-0 float-lg-start text-truncate" id="hExplorer">Explorer</h5>
+                    <div class="form-check form-switch float-end">
+                        <input class="form-check-input" type="checkbox" id="switchExplorer" checked="" onclick="toggleExplorer(this.checked)">
+                    </div>
+                </div>
+                <div class="card-body w-100 p-0" style="height:560px;">
+                    <div id="divContainerTree" style="overflow-y: scroll; height:555px;">
+                        @{
+                            await Html.RenderPartialAsync("Partials/_TreeView", Model);
+                        }
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-rub-blue rounded-0" data-bs-toggle="modal" data-bs-target="#modalDeleteContainer" style="width: 100%; text-align: left;"><span class="oi oi-trash"></span> Remove</button>
+                    <a id="downloadContainer" class="btn btn-rub-blue rounded-0" style="width: 100%; text-align: left;" href=@Url.Action("Download", "Container" , new { projId=Model.Project.Id, id=Model.ContainerMetadata.Id, containerVersion=Model.ContainerMetadata.Version }) role="button">
+                        <span class="oi oi-file"></span> Export
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-5 p-0 d-flex flex-column align-items-stretch flex-shrink-0 " id="divContent">
+            <div class="card rounded-0 w-100 shadow">
+                <div class="card-header  bg-secondary text-white rounded-0">
+                    <h5 class="card-title rounded-0 float-start">Content</h5>
+                    <nav aria-label="Submenu" class="float-end btn-group btn-toolbar">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                Participants
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalParties">Add Participant</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                Ontologies
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalAddOntology">Add Ontology</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalPayloadTriples">Add Payload triples</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                                Documents
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalAddInternalDocument">Add Internal Document</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalAddExternalDocument">Add External Document</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalAddDatabase">Add Database Connection</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalAddFolderDocument">Add Folder</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                                Linksets
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalAddLinkset">Add Linkset</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                Query
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                <li><a class="dropdown-item" href="#" onclick="loadSPARQL('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version')">SPARQL query</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+                <div class="card-body" style="overflow-y: auto; height: 653px;">
+                    <div id="divContainerContent">
+                        @{
+                            await Html.RenderPartialAsync("Partials/Index/_indexContentView", Model);
+                        }
+                    </div>
+                    @*@{
+                            await Html.RenderPartialAsync("Partials/_ContentView", Model);
+                        }*@
+                </div>
+                @*<div class="card-footer">
+
+                    </div>*@
+            </div>
+        </div>
+        <div class="col-4 p-0 ps-3 d-flex flex-column align-items-stretch flex-shrink-0 " id="divProperties">
+            <div class="card rounded-0 w-100 shadow">
+                <div class="card-header bg-secondary rounded-0 text-white">
+                    <h5 class="card-title rounded-0 float-start">Properties</h5>
+                    <nav aria-label="Submenu" class="float-end btn-group btn-toolbar btn-group-sm nav" role="tablist">
+                        <button class="btn btn-outline-light nav-item active" type="button" name="options" id="option1" autocomplete="off" data-bs-toggle="tab" data-bs-target="#propertiesView" role="tab" aria-controls="propertiesView" aria-selected="true">
+                            Properties
+                        </button>
+                        <button class="btn btn-outline-light nav-item" type="button" name="options" id="option2" autocomplete="off" data-bs-toggle="tab" data-bs-target="#ifcView" role="tab" aria-controls="ifcView" aria-selected="false">
+                            IFC-Viewer
+                        </button>
+
+                    </nav>
+                </div>
+                <div class="card-body" style="overflow-y: auto; height:653px;">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="propertiesView" role="tabpanel" aria-labelledby="option1">
+                            <div id="divContainerProperties">
+                                @{
+                                    await Html.RenderPartialAsync("Partials/Index/_indexPropertyView", Model);
+                                }
+                            </div>
+                            @* @{
+                                await Html.RenderPartialAsync("Partials/_PropertyView", Model);
+                                } *@
+                        </div>
+                        <div class="tab-pane" id="ifcView" role="tabpanel" aria-labelledby="option2">
+                            @{
+                                await Html.RenderPartialAsync("Partials/_ifcViewer", Model);
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                @*<div class="card-footer">
+
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    await Html.RenderPartialAsync("Modals/_AddOntology", Model);
+    await Html.RenderPartialAsync("Modals/_AddPayloadTriple", Model);
+    await Html.RenderPartialAsync("Modals/_AddInternalDocument", Model);
+    await Html.RenderPartialAsync("Modals/_AddExternalDocument", Model);
+    await Html.RenderPartialAsync("Modals/_AddDatabaseConnection", Model);
+    await Html.RenderPartialAsync("Modals/_AddFolderDocument", Model);
+    await Html.RenderPartialAsync("Modals/_AddLinkset", Model);
+    await Html.RenderPartialAsync("Modals/_AddParty", Model);
+    await Html.RenderPartialAsync("Modals/_DeleteContainer", Model);
+    await Html.RenderPartialAsync("Modals/_DeleteContent", Model);
+}

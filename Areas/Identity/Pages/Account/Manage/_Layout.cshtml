@@ -1,0 +1,38 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
+    {
+        Layout = (string)parentLayout;
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+<div class="container pt-4 pb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a></li>
+            <li class="breadcrumb-item" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <h5 class="display-6">Manage your account</h5>
+
+    <div>
+        <h5>Change your account settings</h5>
+        <hr />
+        <div class="row">
+            <div class="col-3">
+                <partial name="_ManageNav" />
+            </div>
+            <div class="col-9">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div>
+
+    @section Scripts {
+        @RenderSection("Scripts", required: false)
+    }

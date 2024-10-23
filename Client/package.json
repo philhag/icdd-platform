@@ -1,0 +1,18 @@
+{
+  "name": "asp.net",
+  "version": "0.2.0",
+  "dependencies": {
+    "@xbim/viewer": "2.0.1-pre202110201329"
+  },
+  "devDependencies": {
+    "css-loader": "^5.2.6",
+    "file-loader": "^6.0.0",
+    "style-loader": "^1.1.3",
+    "url-loader": "^4.0.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "scripts": {
+    "build": "webpack"
+  }
+}

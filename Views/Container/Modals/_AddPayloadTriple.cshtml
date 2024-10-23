@@ -1,0 +1,79 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IcddWebApp.PageModels.Container.ContainerPageModel
+<!-- Modal -->
+<div class="modal" id="modalPayloadTriples" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add PayloadTriples to container</h5>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("AddPayloadTriples", "Container", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="modal-body">
+                    @Html.Hidden("projId", Model.Project.Id)
+                    @Html.Hidden("id", Model.ContainerMetadata.Id)
+                    @Html.Hidden("containerVersion", Model.ContainerMetadata.Version)
+
+                    <select name="selectTypePayload" onchange="toggleCheckPayload(this)" class="form-select">
+                        <option id="selectURLOntology" value="url">Import from Web URL</option>
+                        <option id="selectFileOntology" value="file">Import from File</option>
+                    </select>
+                    <hr />
+
+                    <!-- web url -->
+                    <div id="showURLPayload">
+                        <div class="input-group mb-3">
+                            @{ var regexURL = @"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+.(?:ttl|nt|rdf|nq|n3|trig)";}
+                            <span class="input-group-text required-asterisk" style="width:150px;" id="basic-addon2">Web URL</span>
+                            <input id="urlInputPayload" name="WebUrl" type="url" class="form-control" placeholder="Web URL" aria-label="WebUrl" aria-describedby="basic-addon2" pattern=@regexURL title="URL must be HTTP(S) and end with the following file extension: '.ttl', '.nt', '.rdf', '.nq', '.n3', or '.trig'." required>
+                        </div>
+                    </div>
+
+                    <!-- file -->
+                    <div id="showFilePayload" style="display: none;">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text required-asterisk" style="width:150px;" id="basic-addon2">File</span>
+                            <input type="file" name="UploadFile" id="UploadFilePayload" class="form-control" accept=".ttl, .nt, .rdf, .nq, .n3, .trig"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="required-asterisk-before">Required Field</div>
+                    <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-rub-blue rounded-0">Create</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function toggleCheckPayload(that) {
+        if (that.value == "url") {
+            document.getElementById("showURLPayload").style.display = "block";
+            document.getElementById("urlInputPayload").required = true;
+
+            document.getElementById("showFilePayload").style.display = "none";
+            document.getElementById("UploadFilePayload").required = false;
+        }
+        else if (that.value == "file") {
+            document.getElementById("showFilePayload").style.display = "block";
+            document.getElementById("UploadFilePayload").required = true;
+
+            document.getElementById("showURLPayload").style.display = "none";
+            document.getElementById("urlInputPayload").required = false;
+        }
+        else {
+            document.getElementById("showFilePayload").style.display = "none";
+            document.getElementById("UploadFilePayload").required = false;
+
+            document.getElementById("showURLPayload").style.display = "none";
+            document.getElementById("urlInputPayload").required = false;
+        }
+    }
+</script>

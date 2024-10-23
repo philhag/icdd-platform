@@ -1,0 +1,37 @@
+﻿@model IcddWebApp.PageModels.Container.ContainerPageModel
+@using IIB.ICDD.Model.Container.Document
+
+@foreach (var document in Model.Container.ContainerDescription?.ContainsDocument)
+{
+    bool isFolder = document.GetType() == typeof(CtFolderDocument);
+    string deleteType = isFolder ? "folder" : "document";
+        
+    <!-- Modal -->
+    <div class="modal" id="modalDeleteContent-@document.Guid" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete @deleteType</h5>
+                    <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @using (Html.BeginForm("DeleteContent", "Container", FormMethod.Post))
+                {
+                    <div class="modal-body">
+                        @Html.Hidden("projectId", Model.Project.Id)
+                        @Html.Hidden("containerId", Model.ContainerMetadata.Id)
+                        @Html.Hidden("containerVersion", Model.ContainerMetadata.Version)
+                        @Html.Hidden("contentId", document.Guid)
+                        <div class="input-group mb-3">
+                            <label>Are you sure you want to delete the @deleteType '<b>@document.Name</b>'?</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger rounded-0">Delete</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+

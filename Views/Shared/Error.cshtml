@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = Model.ErrorCode + " " + Model.ErrorTitle;
+}
+@model IcddWebApp.PageModels.Error.ErrorPageModel;
+
+<div class="container my-auto">
+    <div class="alert-message alert-message-danger align-self-center">
+        <h4>
+            @Model.ErrorTitle
+            @if (Model.ErrorCode >= 0)
+            {
+                <span class="float-end badge bg-danger">@Model.ErrorCode</span>
+            }
+        </h4>
+        <p>
+            @Model.ErrorMessage
+        </p>
+        @if (Model.Redirect != null)
+        {
+            <a href="@Url.Content(Model.Redirect)" class="btn btn-rub-blue rounded-0">
+                Continue
+            </a>
+        }
+
+
+    </div>
+
+    @if (Model.InnerException != null)
+    {
+        <div class="alert-message alert-message-default">
+            <h4>Exception: @Model.InnerException.Source</h4>
+            <p>
+                @Model.InnerException.Message
+            </p>
+        </div>
+    }
+</div>

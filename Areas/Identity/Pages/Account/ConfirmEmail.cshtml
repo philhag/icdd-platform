@@ -1,0 +1,23 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+}
+
+
+
+
+<div class="container my-auto">
+    <div class="alert-message alert-message-info align-self-center">
+        <h4>
+            @ViewData["Title"]
+        </h4>
+        <a href="@Url.Content("~/Identity/Account/Login")" class="btn btn-rub-blue float-end rounded-0">
+            Continue
+        </a>
+        <p>
+            @Model.StatusMessage
+        </p>
+
+    </div>
+</div>

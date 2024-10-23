@@ -1,0 +1,15 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IcddWebApp.PageModels.Container.LinksetPageModel
+<!-- Modals -->
+@{
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddBinaryLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddDirectedLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddDirectedBinaryLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_AddDirected1ToNLink", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_DeleteLinkset", Model);
+    await Html.RenderPartialAsync("../Linkset/Modals/_DeleteLink", Model);
+}

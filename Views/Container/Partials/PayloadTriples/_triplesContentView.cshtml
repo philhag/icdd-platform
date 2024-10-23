@@ -1,0 +1,238 @@
+﻿@using VDS.RDF
+@using IcddWebApp.PageModels.Container
+@using System.IO;
+@using IIB.ICDD.Model
+@using IIB.ICDD.Model.Interfaces
+@using IcddWebApp.Services.Models.Enums
+@{
+    var guid = Guid.NewGuid().ToString();
+}
+@model IcddWebApp.PageModels.Container.PayloadTriplesPageModel
+
+@{ var isArchived = Model.ContainerMetadata.Status == ContainerStatus.ARCHIVED ? "disabled" : ""; }
+
+<div id="previev" class=" rounded p-2">
+
+    <img class="img-fluid float-end" style="width: 64px; height: 64px; padding: 5px;" src="~/images/doctypes/rdf.png" alt="rdf.png" />
+
+    <span class="display-6">@Model.PayloadTriples.GetFileName()</span>
+</div>
+<hr />
+
+<div class="modal" id="modalDeleteTriples-@guid" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete @Model.PayloadTriples.GetFileName()</h5>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <label>Are you sure you want to delete the payload triples '<b>@Model.PayloadTriples.GetFileName()</b>'?</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger rounded-0" data-bs-dismiss="modal" onclick="deletePayloadTriples('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.PayloadTriples.GetFileName()')">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+
+    <ul class="nav nav-tabs rounded-0" id="myTab" role="tablist">
+        <li class="nav-item rounded-0" role="presentation">
+            <a class="nav-link active rounded-0" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Triples</a>
+        </li>
+        <li class="nav-item rounded-0" role="presentation">
+            <a class="nav-link text-rub-blue" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Links</a>
+        </li>
+        <li class="nav-item rounded-0" role="presentation">
+            <a class="nav-link text-rub-blue" id="turtle-tab" data-bs-toggle="tab" href="#turtle" role="tab" aria-controls="turtle" aria-selected="false">Turtle</a>
+        </li>
+        <li class="nav-item ms-auto">
+            <a href="@Url.Action("DownloadPayloadTriples", "Container", new { projId = Model.Project.Id, id = Model.ContainerMetadata.Id, containerVersion = Model.ContainerMetadata.Version, payloadFileName = Model.PayloadTriples.GetFileName()})"
+               class="btn btn-outline-success btn-sm rounded-0 btn-block me-1 float-end">
+                <span class="oi oi-cloud-download"></span> Download Linkset
+            </a>
+        </li>
+        <li class="nav-item">
+            <button class="btn btn-outline-danger btn-sm rounded-0 float-end" data-bs-toggle="modal" data-bs-target="#modalDeleteTriples-@guid" @isArchived><span class="oi oi-x"></span> Delete payload triples</button>
+        </li>
+    </ul>
+    <div class="row g-0 border border-top-0">
+        <div class="col-12">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active p-2" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <ul class="list-group mb-2 rounded-0">
+                        <li class="list-group-item bg-rub-blue text-white rounded-0">
+                            Individuals
+                        </li>
+                        @{int count = 0;}
+                        @foreach (var individual in Model.PayloadTriples.Individuals)
+                        {
+                            {
+                                count++;
+                            }
+                            <li class="list-group-item">
+                                @if (individual.Resource.NodeType == NodeType.Uri && Model.PayloadTriples.Namespaces.ReduceToQName((individual.Resource as UriNode).Uri.AbsoluteUri, out string qname1))
+                                {
+                                    <strong>@qname1</strong>
+                                }
+                                else
+                                {
+                                    <strong>@individual.ToString()</strong>
+                                }
+
+                                <a class="btn btn-sm btn-link float-end text-rub-blue" data-bs-toggle="collapse" data-bs-target="#collapse-@count" role="button" aria-expanded="false" aria-controls="collapse-@count"><span class="oi oi-chevron-bottom toggle-icon"></span></a>
+
+                                <div class="collapse border-top m-2 p-2" id="collapse-@count">
+
+                                    @foreach (var trip in individual.TriplesWithSubject)
+                                    {
+                                        var property = new IcddResourceWrapper(trip.Predicate as UriNode);
+                                        <div class="row g-0">
+                                            <div class="col-5">
+                                                @property.Identifier
+                                            </div>
+
+                                            <div class="col-5">
+                                                @{
+                                                    var string1 = "";
+                                                    var lit = trip.Object as LiteralNode;
+                                                    if (lit != null)
+                                                    {
+                                                        string1 = lit.Value;
+                                                        <input class="form-control form-control-sm rounded-0 disabled" value="@string1" />
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (trip.Object != null)
+                                                        {
+                                                            var obj = trip.Object as UriNode;
+                                                            if (obj != null)
+                                                            {
+                                                                if (Model.PayloadTriples.Namespaces.ReduceToQName(obj.Uri.AbsoluteUri, out string qname2))
+                                                                {
+                                                                    <a href="@obj.Uri.AbsoluteUri" target="_blank"><strong>@qname2</strong></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a href="@obj.Uri.AbsoluteUri" target="_blank">
+                                                                        <strong>
+                                                                            @trip.Object.ToString()
+                                                                        </strong>
+                                                                    </a>
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                if (trip.Object.NodeType == NodeType.Blank)
+                                                                {
+                                                                    var bl = trip.Object as BlankNode;
+                                                                    @bl.ToString();
+                                                                }
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+
+                                            </div>
+                                            <div class="col-1">
+                                                @*@if (lit != null)
+                                                    {
+                                                        <button class="btn btn-rub-blue btn-sm rounded-0 disabled"><span class="oi oi-pencil"></span></button>
+                                                    }*@
+                                            </div>
+
+                                        </div>
+
+                                    }
+                                </div>
+                            </li>
+
+
+
+                        }
+                    </ul>
+
+                </div>
+                <div class="tab-pane fade p-2" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <table class="table table-sm table-striped table-bordered">
+                        <thead class="bg-rub-blue text-white">
+                            <tr class="bg-rub-blue text-white">
+                                <th scope="col">Link</th>
+                                <th scope="col">Documentation</th>
+                                <th scope="col">Model</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        @*@{ foreach (var linkset in Model.Container.Linksets)
+                                {
+                                    var list = linkset.HasLinks;/* .FindAll(m => m.HasLinkElements.FindAll(x => x.HasDocument.Equals(document)).Count > 0);*/
+                                    foreach (LsLink link in list)
+                                    {
+                                        if (link as LsDirectedLink != null)
+                                        {
+                                            var dirLink = link as LsDirectedLink;
+                                            <tr>
+                                                <td class="small">@dirLink.ElementType().Identifier<br />ID: @dirLink.Guid</td>
+                                                <td class="text-break small">
+                                                    @foreach (var elem in dirLink.FromElements)
+                                                    {
+                                                        <a href="#">@elem.ToString()</a> <br /><br />
+                                                    }
+                                                </td>
+                                                <td class="small">
+                                                    @foreach (var elem in dirLink.ToElements)
+                                                    {
+                                                        <a href="#">@elem.ToString()</a> <br /> <br />
+                                                    }
+                                                </td>
+                                                <td> <button id="@link.Guid" class=" btn btn-link tab-clicker"><span class="oi oi-external-link"></span></button></td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>@link.ElementType().Identifier</td>
+                                                <td>
+                                                    @foreach (var elem in link.HasLinkElements)
+                                                    {
+                                                        if (elem.HasDocument.Equals(document))
+                                                        {
+                                                            <p>@elem.HasIdentifier?.ToString()</p>
+                                                        }
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @foreach (var elem in link.HasLinkElements)
+                                                    {
+                                                        if (!elem.HasDocument.Equals(document))
+                                                        {
+                                                            <p>@elem.ToString()</p>
+                                                        }
+                                                    }
+                                                </td>
+                                                <td> <button id="@link.Guid" class=" btn btn-link tab-clicker"><span class="oi oi-external-link"></span></button></td>
+                                            </tr>
+                                        }
+
+
+                                    }
+                                }
+                            }*@
+                    </table>
+
+                </div>
+                <div class="tab-pane fade p-2" id="turtle" role="tabpanel" aria-labelledby="turtle-tab">
+                    <textarea class="font-monospace w-100 small" style="height: 430px;">
+                        @Html.Raw(Model.PayloadTriples.ToTurtleString())
+                    </textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

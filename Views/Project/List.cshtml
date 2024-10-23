@@ -1,0 +1,75 @@
+﻿@using Microsoft.AspNetCore.Http
+@using IcddWebApp.Services.Models
+@model IcddWebApp.PageModels.Project.ProjectPageModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Project List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container pt-4 pb-5" id="ProjectOverview">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Projects</li>
+        </ol>
+    </nav>
+    <div class="card panel-default rounded-0">
+        <div class="card-header rounded-0 fw-bold">
+            <h5 class="display-6">Project List</h5>
+        </div>
+        <div class="card-body rounded-0">
+            <table class="table table-striped">
+                <thead class="bg-rub-blue text-white">
+                    <tr class="bg-rub-blue text-white">
+                        <th scope="col">Project</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Modified</th>
+                        <th scope="col">Container</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (Project proj in Model.User.Projects.OrderBy(x => x.Name))
+                        {
+                            <tr>
+                                <td><a href="~/Project/Details/@proj.Id">@proj.Name</a></td>
+                                <td>@proj.Created</td>
+                                <td>@proj.Modified</td>
+                                <td>@proj.Containers.Count</td>
+                                <td>
+                                    <div class="float-end">
+                                        <a href="~/Project/Details/@proj.Id" class="btn btn-outline-primary btn-sm rounded-0 btn-block float-none">
+                                            <span class="oi oi-magnifying-glass"></span>
+                                        </a>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a href="~/Project/Delete/@proj.Id" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none"><span class="oi oi-trash"></span></a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            @using (Html.BeginForm("AddProject", "Project", FormMethod.Post))
+            {
+                <div class="float-end">
+                    <div class="input-group rounded-0">
+                        <label for="projectName" class="visually-hidden">Project Name</label>
+                        <input name="projectName" type="text" class="form-control form-control-sm rounded-0 border  border-rub-blue" id="projectName" placeholder="Project name" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-rub-blue btn-sm rounded-0" type="submit">Create Project</button>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

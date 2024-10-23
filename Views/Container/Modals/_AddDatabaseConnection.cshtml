@@ -1,0 +1,69 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IcddWebApp.PageModels.Container.ContainerPageModel
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal" id="modalAddDatabase" tabindex="-1" aria-labelledby="databaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="databaseModalLabel">Create a new database connection</h5>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("CreateDatabaseLink", "Container", FormMethod.Post))
+            {
+                <div class="modal-body">
+                    @Html.Hidden("projId", Model.Project.Id)
+                    @Html.Hidden("id", Model.ContainerMetadata.Id)
+                    @Html.Hidden("containerVersion", Model.ContainerMetadata.Version)
+                    <div class="input-group mb-3">
+                        <span class="input-group-text required-asterisk" style="width:180px;" id="basic-addon1">Connection string</span>
+                        <input name="connectionString" type="text" class="form-control" placeholder="Connection string" aria-label="Description" aria-describedby="basic-addon1" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon2">Database name</span>
+                        <input name="databaseName" type="text" class="form-control" placeholder="Database name" aria-label="Description" aria-describedby="basic-addon2" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon3">Database type</span>
+                        <input name="databaseType" type="text" class="form-control" placeholder="Type" value="MSSQL" aria-label="Description" aria-describedby="basic-addon3" required readonly="">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon4">Query language</span>
+                        <input name="queryLanguage" type="text" class="form-control" placeholder="Query Language" value="SQL" aria-label="Description" aria-describedby="basic-addon4" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" style="width: 180px;" id="basic-addon5">MappingFile (*.ttl)</span>
+                        <select name="mappingFile" class="form-select" aria-label="MappingFile">
+                            <option selected value="">No mapping</option>
+                            @foreach (var doc in Model.Container.Documents.FindAll(doc=>doc.FileType.Trim().ToLower().Contains("ttl") || doc.FileType.Trim().ToLower().Contains("rdf")))
+                            {
+                                <option value="@doc.AsUri().AbsoluteUri">@doc.Name</option>
+                            }
+                        </select>
+                    </div>
+                    @*<div class="input-group mb-3">
+                        <span class="input-group-text" style="width: 180px;" id="basic-addon5">Schema</span>
+                        <input name="schema" type="text" class="form-control" placeholder="Schema" aria-label="Schema" aria-describedby="basic-addon2">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" style="width: 180px;" id="basic-addon6">Schema-Subset</span>
+                        <input name="schemaSubset" type="text" class="form-control" placeholder="Schema-Subset" aria-label="Schema-Subset" aria-describedby="basic-addon2">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" style="width: 180px;" id="basic-addon7">Schema-Version</span>
+                        <input name="schemaVersion" type="text" class="form-control" placeholder="Schema-Version" aria-label="Schema-Version" aria-describedby="basic-addon2">
+                    </div>*@
+                </div>
+                <div class="modal-footer">
+                    <div class="required-asterisk-before">Required Field</div>
+                    <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-rub-blue rounded-0">Create</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

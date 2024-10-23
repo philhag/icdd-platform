@@ -1,0 +1,99 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IcddWebApp.PageModels.Container.ContainerPageModel
+<!-- Modal -->
+<div class="modal" id="modalAddRequiredDocument" tabindex="-1" aria-labelledby="modalAddRequiredDocumentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddRequiredDocumentLabel">Create a requirement document</h5>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("CreateRequirementDocument", "Container", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="modal-body">
+                    @Html.Hidden("projId", Model.Project.Id)
+                    @Html.Hidden("id", Model.ContainerMetadata.Id)
+                    @Html.Hidden("containerVersion", Model.ContainerMetadata.Version)
+
+                    @*<select name="selectType" onchange="toggleCheck(this)" class="form-select">
+                        <option id="selectInternal" value="internal">Internal Document</option>
+                        <option id="selectEncrypted" value="encrypted">Encrypted Document</option>
+                        <option id="selectSecured" value="secured">Secured Document</option>
+                    </select>*@
+                    <hr />
+                    <div class="input-group mb-3">
+                        @{
+                        var regexName = @"^[\w,\s-]+\.[A-Za-z]{2,4}$";
+                        var nameTitle = "Filename must be in the form of '*.*'";
+                        }
+                        <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon2">File name:</span>
+                        <input name="filename" type="text" class="form-control" placeholder="File name" aria-label="File name" aria-describedby="basic-addon2" required pattern=@regexName title="@nameTitle" />
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon2">Description</span>
+                        <input name="description" type="text" class="form-control" placeholder="Description" aria-label="Description" aria-describedby="basic-addon2" required />
+                    </div>
+                    <div class="input-group mb-3">
+                        @{
+                        var regexMimetype = @"^[-\w.]+/[-\w.+]+$";
+                        var MimtepytTitle = "MimeType must be a valid mimetype, e.g. image/svg+xml.";
+                        }
+                        <span class="input-group-text required-asterisk" style="width: 180px;" id="basic-addon2">Mimetype:</span>
+                        <input name="mimeType" type="text" class="form-control" placeholder="Mimetype" aria-label="File name" aria-describedby="basic-addon2" required pattern=@regexMimetype title="@MimtepytTitle"/>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" style="width: 180px;" id="basic-addon2">Schema</span>
+                        <input name="schema" type="text" class="form-control" placeholder="Schema" aria-label="Schema" aria-describedby="basic-addon2">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" style="width: 180px;" id="basic-addon2">Schema-Subset</span>
+                        <input name="schemaSubset" type="text" class="form-control" placeholder="Schema-Subset" aria-label="Schema-Subset" aria-describedby="basic-addon2">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" style="width: 180px;" id="basic-addon2">Schema-Version</span>
+                        <input name="schemaVersion" type="text" class="form-control" placeholder="Schema-Version" aria-label="Schema-Version" aria-describedby="basic-addon2">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="required-asterisk-before">Required Field</div>
+                    <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-rub-blue rounded-0">Create</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@*<script type="text/javascript">
+    function toggleCheck(that) {
+        if (that.value == "encrypted") {
+            document.getElementById("showEncrypted").style.display = "block";
+            document.getElementById("encryptionAlgorithm").required = true;
+
+            document.getElementById("showSecured").style.display = "none";
+            document.getElementById("checksum").required = false;
+            document.getElementById("checksumAlgorithm").required = false;
+        }
+        else if (that.value == "secured") {
+            document.getElementById("showSecured").style.display = "block";
+            document.getElementById("checksum").required = true;
+            document.getElementById("checksumAlgorithm").required = true;
+
+            document.getElementById("showEncrypted").style.display = "none";
+            document.getElementById("encryptionAlgorithm").required = false;
+        }
+        else {
+            document.getElementById("showEncrypted").style.display = "none";
+            document.getElementById("encryptionAlgorithm").required = false;
+
+            document.getElementById("showSecured").style.display = "none";
+            document.getElementById("checksum").required = false;
+            document.getElementById("checksumAlgorithm").required = false;
+        }
+    }
+</script>*@

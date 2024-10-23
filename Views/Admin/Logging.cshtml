@@ -1,0 +1,99 @@
+﻿
+@using IcddWebApp.PageModels.Admin
+@model IcddWebApp.PageModels.Admin.LoggingPageModel
+@{
+    ViewData["Title"] = "Logging";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 pb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Admin/#">Admin</a></li>
+            <li class="breadcrumb-item" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <h5 class="display-6">Admin Area</h5>
+    <hr />
+    <div class="row">
+        <div class="col-2">
+            @{
+                await Html.RenderPartialAsync("_AdminAreaNav", Model);
+            }
+
+        </div>
+        <div class="col-9">
+            <h4>@ViewData["Title"]</h4>
+
+            @{
+                Model.LogFiles.Reverse();
+                foreach (var logFile in Model.LogFiles)
+                {
+                    <h2>@logFile.ToString()</h2>
+
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="bg-rub-blue text-white">
+                                <th>Zeit</th>
+                                <th>Typ</th>
+                                <th>Message</th>
+                                <th>FunctionCall</th>
+                            </tr>
+                        </thead>
+                        @{
+                            foreach (var log in logFile.GetEntries())
+                            {
+                                string rowColor = "";
+                                switch (log.GetEntryType())
+                                {
+                                    case LogEntryType.Info:
+                                        rowColor = "color:black;";
+                                        break;
+                                    case LogEntryType.Warning:
+                                        rowColor = "color:DarkOrange;";
+                                        break;
+                                    case LogEntryType.Error:
+                                        rowColor = "color:red;";
+                                        break;
+                                }
+                                <tr style="@rowColor">
+                                    <td>@log.GetTime()</td>
+                                    <td>@log.GetEntryType()</td>
+                                    <td>@Html.Raw(log.GetValue())</td>
+                                    <td>@log.GetFunction()</td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                    @using (Html.BeginForm("ClearLog", "Admin", FormMethod.Post))
+                    {
+                        <input name="logfile" id="logfile" type="hidden" value="@logFile.GetFilePath()" />
+                        <button type="submit" class="btn float-start btn-rub-blue">Clear LogFile</button>
+                    }
+
+                    @using (Html.BeginForm("DeleteLog", "Admin", FormMethod.Post))
+                    {
+                        <input name="logfile" id="logfile" type="hidden" value="@logFile.GetFilePath()" />
+                        <button type="submit" class="btn float-end btn-rub-blue">Delete LogFile</button>
+                    }
+                    <br /><br /><br />
+                }
+            }
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("[href]").each(function () {
+            if (this.href == window.location.href) {
+                $(this).addClass("active bg-rub-green text-dark");
+            }
+        });
+    });
+
+</script>

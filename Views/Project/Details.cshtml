@@ -1,0 +1,430 @@
+﻿@using IcddWebApp.WebApplication.Extensions
+@using Microsoft.AspNetCore.Http
+@using IcddWebApp.PageModels.Project
+@using IcddWebApp.Services.Models
+@using IcddWebApp.Services.Models.Enums
+@model IcddWebApp.PageModels.Project.ProjectDetailPageModel
+@*@inject IHttpContextAccessor HttpContextAccessor*@
+@{
+    ViewData["Title"] = Model.Project.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4" id="ProjectDetails">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Project/List">Projects</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Project.Name</li>
+        </ol>
+    </nav>
+    <h5 class="display-6">@Model.Project.Name</h5>
+
+    <div class="container-fluid row align-content-start px-2">
+        <div class="col-4 p-0 pe-2">
+            @using (Html.BeginForm("UpdateProject", "Project", FormMethod.Post))
+            {
+                @*@Html.HiddenFor(m => m.Project.Name)*@
+                <div class="card panel-default rounded-0" style="height: calc(100vh - 60px - 70px - 40px - 41px - 15px - 76px);">
+                    <div class="card-header"><h5 class="card-title rounded-0">Project Properties</h5></div>
+                    <div class="card-body">
+
+                        <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+                            <tr>
+                                <td class="small">ID</td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.Project.Id, new { @class = "form-control rounded-0 form-control-sm", @readonly = "readonly" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="small required-asterisk">Name</td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.Project.Name, new { @class = "form-control rounded-0 form-control-sm", required = "required" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <th colspan="2" scope="row" class="bg-rub-grey text-rub-blue" style="vertical-align: middle">General</th>
+                            </tr>
+                            <tr>
+                                <td class="small">Created</td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.Project.Created, new { @class = "form-control rounded-0 form-control-sm", @readonly = "readonly" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="small">Modified</td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.Project.Modified, new { @class = "form-control rounded-0 form-control-sm", @readonly = "readonly" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="small">Members</td>
+                                <td>
+                                    @Html.ListBoxFor(m => m.Project.Users, new SelectList(Model.Project.Users), new { @class = "form-control form-group rounded-0 form-control-sm", @readonly = "readonly" })
+                                </td>
+                            </tr>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <tr>
+                                    <th colspan="2" scope="row" class="bg-rub-grey text-rub-blue" style="vertical-align: middle">Admin</th>
+                                </tr>
+                                <tr>
+                                    <td class="small">Add user to project</td>
+                                    <td>
+                                        @Html.TextBox("addUser", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter username here" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="small">Delete user from project</td>
+                                    <td>
+                                        @Html.TextBox("deleteUser", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter username here" })
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="required-asterisk-before float-start">Required Field</div>
+                        <button id="UpdateProject-@Model.Project.Id" class="btn btn-sm btn-rub-green float-end rounded-0" type="submit"><span class="oi oi-loop-square"></span> Update</button>
+                    </div>
+
+                </div>
+            }
+        </div>
+        <div class="col-8 p-0 pe-2">
+            <div class="card rounded-0 mb-0" style="height: calc(100vh - 60px - 70px - 40px - 41px - 15px - 76px);">
+                <div class="card-header rounded-0 fw-bold">
+                    <span class="float-end">@Model.Project.Containers.Count entries</span>
+                    <h5 class="card-title rounded-0">Containers</h5>
+                </div>
+                <div class="card-body rounded-0">
+
+
+                    <table class="table table-striped">
+                        <thead class="bg-rub-blue text-white">
+                            <tr class="bg-rub-blue text-white">
+                                <th scope="col">Container</th>
+                                <th scope="col">Version</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Modified</th>
+                                <th scope="col">Suitability</th>
+                                <th scope="col">Status</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (ContainerMetadata cont in Model.Project.Containers.FindAll(m => m.Suitability == ContainerSuitability.SUITABLE_FOR_REQUIREMENTS).OrderBy(x => x.Name))
+                            {
+                                <tr>
+                                    <td><span class="text-muted small">[REQ]</span> <a href="@Url.Content("~/Project/"+Model.Project.Id+"/Container/"+cont.Id+"/"+@cont.Version+"/Index")">@cont.Name</a></td>
+                                    <td>@cont.Version.@cont.Revision</td>
+                                    <td>@cont.Created</td>
+                                    <td>@cont.Modified</td>
+                                    <td>@cont.Suitability?.GetDescription()</td>
+                                    <td>
+                                        @{
+                                            if (cont.Status == ContainerStatus.PUBLISHED)
+                                            {
+                                                <span class="badge" style="background-color: #5CB85C">@cont.Status.GetDescription()</span>
+                                            }
+                                            else if (cont.Status == ContainerStatus.ARCHIVED)
+                                            {
+                                                <span class="badge" style="background-color: #777777">@cont.Status.GetDescription()</span>
+                                            }
+                                            else if (cont.Status == ContainerStatus.SHARED)
+                                            {
+                                                <span class="badge" style=" background-color: #5BC0DE">@cont.Status.GetDescription()</span>
+                                            }
+                                            else if (cont.Status == ContainerStatus.WORK_IN_PROGRESS)
+                                            {
+                                                <span class="badge" style="background-color: #F0AD4E">@cont.Status.GetDescription()</span>
+                                            }
+                                        }
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="float-end">
+                                            <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Details" class="btn btn-outline-primary btn-sm rounded-0 btn-block float-none" title="View details">
+                                                <span class="oi oi-magnifying-glass"></span>
+                                            </a>
+
+                                            @using (Html.BeginForm("NextVersion", "Container", FormMethod.Post, new { @class = "d-inline-block" }))
+                                            {
+                                                @Html.Hidden("projectId", Model.Project.Id)
+                                                @Html.Hidden("containerId", cont.Id)
+                                                <button type="submit" class="btn btn-outline-warning btn-sm rounded-0 btn-block float-none" title="Add new version">
+                                                    <span class="oi oi-arrow-circle-right"></span>
+                                                </button>
+
+                                            }
+                                            <a href="@Url.Action("Download", "Container", new { projId = Model.Project.Id, id = cont.Id, containerVersion = cont.Version })" class="btn btn-outline-success btn-sm rounded-0 btn-block float-none" title="Download">
+                                                <span class="oi oi-cloud-download"></span>
+                                            </a>
+
+                                            @if (cont.Status == ContainerStatus.ARCHIVED)
+                                            {
+                                                <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none disabled" title="Delete" style="pointer-events:none;">
+                                                    <span class="oi oi-trash"></span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none" title="Delete">
+                                                    <span class="oi oi-trash"></span>
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            }
+
+                            @{
+                                foreach (ContainerMetadata cont in Model.Project.Containers.FindAll(m => m.Suitability != ContainerSuitability.SUITABLE_FOR_AM_INSPECTION && m.Suitability != ContainerSuitability.SUITABLE_FOR_AM_MAINTENANCE && m.Suitability != ContainerSuitability.SUITABLE_FOR_REQUIREMENTS).OrderBy(x => x.Name))
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Content("~/Project/" + Model.Project.Id + "/Container/" + cont.Id + "/" + @cont.Version + "/Index")">@cont.Name</a>
+                                        </td>
+                                        <td>@cont.Version.@cont.Revision</td>
+                                        <td>@cont.Created</td>
+                                        <td>@cont.Modified</td>
+                                        <td>@cont.Suitability?.GetDescription()</td>
+                                        <td>
+                                            @{
+                                                if (cont.Status == ContainerStatus.PUBLISHED)
+                                                {
+                                                    <span class="badge" style="background-color: #5CB85C">@cont.Status.GetDescription()</span>
+                                                }
+                                                else if (cont.Status == ContainerStatus.ARCHIVED)
+                                                {
+                                                    <span class="badge" style="background-color: #777777">@cont.Status.GetDescription()</span>
+                                                }
+                                                else if (cont.Status == ContainerStatus.SHARED)
+                                                {
+                                                    <span class="badge" style="background-color: #5BC0DE">@cont.Status.GetDescription()</span>
+                                                }
+                                                else if (cont.Status == ContainerStatus.WORK_IN_PROGRESS)
+                                                {
+                                                    <span class="badge" style="background-color: #F0AD4E">@cont.Status.GetDescription()</span>
+                                                }
+                                            }
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="float-end">
+                                                @* @Html.ActionLink("Download", "Download", "Container", new { projId = Model.Project.Id, id = cont.Id, containerVersion = cont.Version })*@
+                                                <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Index" class="btn btn-outline-primary btn-sm rounded-0 btn-block float-none">
+                                                    <span class="oi oi-magnifying-glass"></span>
+                                                </a>
+
+                                                @using (Html.BeginForm("NextVersion", "Container", FormMethod.Post, new { @class = "d-inline-block" }))
+                                                {
+                                                    @Html.Hidden("projectId", Model.Project.Id)
+                                                    @Html.Hidden("containerId", cont.Id)
+                                                    <button type="submit" class="btn btn-outline-warning btn-sm rounded-0 btn-block float-none" title="Add new version">
+                                                        <span class="oi oi-arrow-circle-right"></span>
+                                                    </button>
+
+                                                }
+                                                <a href="@Url.Action("Download", "Container", new { projId = Model.Project.Id, id = cont.Id, containerVersion = cont.Version })" class="btn btn-outline-success btn-sm rounded-0 btn-block float-none" title="Download">
+                                                    <span class="oi oi-cloud-download"></span>
+                                                </a>
+
+                                                @if (cont.Status == ContainerStatus.ARCHIVED)
+                                                {
+                                                    <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none disabled" title="Delete" style="pointer-events: none;">
+                                                        <span class="oi oi-trash"></span>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none" title="Delete">
+                                                        <span class="oi oi-trash"></span>
+                                                    </a>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            @{
+                                if (Model.Project.Containers.Any(m => m.Suitability == ContainerSuitability.SUITABLE_FOR_AM_MAINTENANCE))
+                                {
+                                    <tr class="bg-rub-grey text-rub-blue">
+                                        <td colspan="7">Asset Management Maintenance Containers</td>
+                                    </tr>
+                                    foreach (ContainerMetadata cont in Model.Project.Containers.FindAll(m => m.Suitability == ContainerSuitability.SUITABLE_FOR_AM_MAINTENANCE).OrderBy(x => x.Name))
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Content("~/Project/" + Model.Project.Id + "/Container/" + cont.Id + "/" + @cont.Version + "/MaintenanceDetails")">@cont.Name</a></td>
+                                            <td>@cont.Version.@cont.Revision</td>
+                                            <td>@cont.Created</td>
+                                            <td>@cont.Modified</td>
+                                            <td>@cont.Suitability?.GetDescription()</td>
+                                            <td>
+                                                @{
+                                                    if (cont.Status == ContainerStatus.PUBLISHED)
+                                                    {
+                                                        <span class="badge" style="background-color: #5CB85C">@cont.Status.GetDescription()</span>
+                                                    }
+                                                    else if (cont.Status == ContainerStatus.ARCHIVED)
+                                                    {
+                                                        <span class="badge" style="background-color: #777777">@cont.Status.GetDescription()</span>
+                                                    }
+                                                    else if (cont.Status == ContainerStatus.SHARED)
+                                                    {
+                                                        <span class="badge" style="background-color: #5BC0DE">@cont.Status.GetDescription()</span>
+                                                    }
+                                                    else if (cont.Status == ContainerStatus.WORK_IN_PROGRESS)
+                                                    {
+                                                        <span class="badge" style="background-color: #F0AD4E">@cont.Status.GetDescription()</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="float-end">
+                                                    <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Details" class="btn btn-outline-primary btn-sm rounded-0 btn-block float-none" title="View details">
+                                                        <span class="oi oi-magnifying-glass"></span>
+                                                    </a>
+
+                                                    @using (Html.BeginForm("NextVersion", "Container", FormMethod.Post, new { @class = "d-inline-block" }))
+                                                    {
+                                                        @Html.Hidden("projectId", Model.Project.Id)
+                                                        @Html.Hidden("containerId", cont.Id)
+                                                        <button type="submit" class="btn btn-outline-warning btn-sm rounded-0 btn-block float-none" title="Add new version">
+                                                            <span class="oi oi-arrow-circle-right"></span>
+                                                        </button>
+
+                                                    }
+                                                    <a href="@Url.Action("Download", "Container", new { projId = Model.Project.Id, id = cont.Id, containerVersion = cont.Version })" class="btn btn-outline-success btn-sm rounded-0 btn-block float-none" title="Download">
+                                                        <span class="oi oi-cloud-download"></span>
+                                                    </a>
+
+                                                    @if (cont.Status == ContainerStatus.ARCHIVED)
+                                                    {
+                                                        <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none disabled" title="Delete" style="pointer-events: none;">
+                                                            <span class="oi oi-trash"></span>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none" title="Delete">
+                                                            <span class="oi oi-trash"></span>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                }
+                                if (Model.Project.Containers.Any(m => m.Suitability == ContainerSuitability.SUITABLE_FOR_AM_INSPECTION))
+                                {
+                                    <tr class="bg-rub-grey text-rub-blue">
+                                        <td colspan="7">Asset Management Inspection Containers</td>
+                                    </tr>
+                                    foreach (ContainerMetadata cont in Model.Project.Containers.FindAll(m => m.Suitability == ContainerSuitability.SUITABLE_FOR_AM_INSPECTION).OrderBy(x => x.Name))
+                                    {
+
+                                        <tr>
+                                            <td><a href="@Url.Content("~/Project/" + Model.Project.Id + "/Container/" + cont.Id + "/" + @cont.Version + "/InspectionDetails")">@cont.Name</a></td>
+                                            <td>@cont.Version.@cont.Revision</td>
+                                            <td>@cont.Created</td>
+                                            <td>@cont.Modified</td>
+                                            <td>@cont.Suitability?.GetDescription()</td>
+                                            <td>
+                                                @{
+                                                    if (cont.Status == ContainerStatus.PUBLISHED)
+                                                    {
+                                                        <span class="badge" style="background-color: #5CB85C">@cont.Status.GetDescription()</span>
+                                                    }
+                                                    else if (cont.Status == ContainerStatus.ARCHIVED)
+                                                    {
+                                                        <span class="badge" style="background-color: #777777">@cont.Status.GetDescription()</span>
+                                                    }
+                                                    else if (cont.Status == ContainerStatus.SHARED)
+                                                    {
+                                                        <span class="badge" style="background-color: #5BC0DE">@cont.Status.GetDescription()</span>
+                                                    }
+                                                    else if (cont.Status == ContainerStatus.WORK_IN_PROGRESS)
+                                                    {
+                                                        <span class="badge" style="background-color: #F0AD4E">@cont.Status.GetDescription()</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="float-end">
+                                                    <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Details" class="btn btn-outline-primary btn-sm rounded-0 btn-block float-none" title="View details">
+                                                        <span class="oi oi-magnifying-glass"></span>
+                                                    </a>
+
+                                                    @using (Html.BeginForm("NextVersion", "Container", FormMethod.Post, new { @class = "d-inline-block" }))
+                                                    {
+                                                        @Html.Hidden("projectId", Model.Project.Id)
+                                                        @Html.Hidden("containerId", cont.Id)
+                                                        <button type="submit" class="btn btn-outline-warning btn-sm rounded-0 btn-block float-none" title="Add new version">
+                                                            <span class="oi oi-arrow-circle-right"></span>
+                                                        </button>
+
+                                                    }
+                                                    <a href="@Url.Action("Download", "Container", new { projId = Model.Project.Id, id = cont.Id, containerVersion = cont.Version })" class="btn btn-outline-success btn-sm rounded-0 btn-block float-none" title="Download">
+                                                        <span class="oi oi-cloud-download"></span>
+                                                    </a>
+
+                                                    @if (cont.Status == ContainerStatus.ARCHIVED)
+                                                    {
+                                                        <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none disabled" title="Delete" style="pointer-events: none;">
+                                                            <span class="oi oi-trash"></span>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="~/Project/@Model.Project.Id/Container/@cont.Id/@cont.Version/Delete" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none" title="Delete">
+                                                            <span class="oi oi-trash"></span>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-rub-blue btn-sm rounded-0 float-start" type="button" data-bs-toggle="offcanvas" data-bs-target="#uploadContainer" aria-controls="offcanvasRight"><span class="oi oi-data-transfer-upload  pe-1"></span>Upload a Container</button>
+                    <button class="btn btn-rub-blue btn-sm rounded-0 float-end" type="button" data-bs-toggle="offcanvas" data-bs-target="#addContainer" aria-controls="offcanvasRight"><span class="oi oi-plus pe-1"></span>Create new Container</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+@* Create new Container offcanvas *@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="addContainer" aria-labelledby="offcanvasRightLabel" style="width: 30%">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">Create a new container for project: @Model.Project.Name</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        @{
+            await Html.RenderPartialAsync("Partials/_AddContainer", Model);
+        }
+    </div>
+</div>
+
+@* Upload container offcanvas *@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="uploadContainer" aria-labelledby="offcanvasRightLabel" style="width: 30%">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">Upload a new container for project: @Model.Project.Name</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        @{
+            await Html.RenderPartialAsync("Partials/_UploadContainer", Model);
+        }
+    </div>
+</div>

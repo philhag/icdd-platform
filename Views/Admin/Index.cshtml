@@ -1,0 +1,77 @@
+﻿@model IcddWebApp.PageModels.Admin.AdminIndexPageModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid pt-4 pb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Admin">Admin</a></li>
+            <li class="breadcrumb-item" aria-current="page">Admin Area</li>
+        </ol>
+    </nav>
+
+    <h5 class="display-6">Admin Area</h5>
+    <hr />
+    <div class="row">
+        <div class="col-2">
+            @{
+                await Html.RenderPartialAsync("_AdminAreaNav", Model);
+            }
+        </div>
+        <div class="col-9">
+            <h4>Welcome!</h4>
+        </div>
+    </div>
+
+
+    @*<div id="divLogin" class="card">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Login</h4>
+            </div>
+            <div class="card-body">
+                <form role="form" autocomplete="off" id="formLogin" novalidate="" method="post">
+                    <div class="form-group">
+                        <label for="loginUsername" class="sr-only">Benutzername</label>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <span class="oi oi-person"></span>
+                                </div>
+                            </div>
+                            <input type="text" class="form-control form-control-sm rounded-0" name="username" id="loginUsername" required="" placeholder="Benutzername">
+                            <div class="invalid-feedback">Bitte einen Benutzernamen eingeben!</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword" class="sr-only">Passwort</label>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text rounded-0">
+                                    <span class="oi oi-key"></span>
+                                </div>
+                            </div>
+                            <input type="password" class="form-control form-control-sm rounded-0" id="loginPassword" required="" autocomplete="new-password" placeholder="Passwort" name="password">
+                            <div class="invalid-feedback">Bitte ein Passwort eingeben!</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-rub-blue btn-sm rounded-0 float-end" id="btnLogin" type="submit">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>*@
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("[href]").each(function () {
+            if (this.href == "http://localhost:44357/Admin/#") {
+                $(this).addClass("active bg-rub-green text-dark");
+            }
+        });
+    });
+
+</script>

@@ -1,0 +1,645 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>IcddWebApp</name>
+    </assembly>
+    <members>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.UserLogin(IcddWebApp.Services.Models.Authentication.UserLogin)">
+            <summary>
+            Logs in user to authorize further requests
+            </summary>
+            <response code="200">Returns access and refresh token including their expiration time (header)</response>
+            <response code="400">Invalid user credentials</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="403">No permission for the requested operation</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.UserLogout">
+            <summary>
+            Invalidates refresh token
+            </summary>
+            <response code="200">No Content</response>
+            <response code="400">Token is invalid</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="403">No permission for the requested operation</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.RefreshToken(System.String,System.String)">
+            <summary>
+            Returns refresh token
+            </summary>
+            <response code="200">Returns new access and refresh token including their expiration time (header)</response>
+            <response code="400">Refresh token expired or does not belong to access token</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="403">No permission for the requested operation</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.GetUsers">
+            <summary>
+            Returns list of existing users (admins only)
+            </summary>
+            <response code="200">Returns list of existing users</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="403">No permission for the requested operation</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.GetUser(System.String)">
+            <summary>
+            Returns user by username
+            </summary>
+            <response code="200">Returns user</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="403">No permission for the requested operation</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.RegisterUser(IcddWebApp.Services.Models.Authentication.UserRegister)">
+            <summary>
+            Register new user
+            </summary>
+            <response code="200">Returns newly created user</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="403">No permission for the requested operation</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.AddUserToProject(System.String,System.String)">
+            <summary>
+            Add project to user
+            </summary>
+            <response code="200">Returns user</response>
+            <response code="400">User or project was not found</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.AddRoleToUser(System.String,System.String)">
+            <summary>
+            Add role to user
+            </summary>
+            <response code="200">Returns user</response>
+            <response code="400">User was not found</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.AuthController.PostUserRole(System.String)">
+            <summary>
+            Add role to user
+            </summary>
+            <response code="200">Returns user</response>
+            <response code="400">User was not found</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetContainerTypes(System.String)">
+            <summary>
+            Returns existing container types
+            </summary>
+            <response code="200">Returns types</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetContainers(System.String,IcddWebApp.Services.Models.Enums.ContainerType)">
+            <summary>
+            Returns existing containers in database
+            </summary>
+            <response code="200">Returns container-list as json</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetContainer(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String)">
+            <summary>
+            Returns container by id
+            </summary>
+            <response code="200">Returns container as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetQueryContainer(System.String,System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.Boolean)">
+            <summary>
+            Query container with SPARQL
+            </summary>
+            <response code="200">Returns json</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetQueryContainerVersion(System.String,System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.Boolean)">
+            <summary>
+            Query container version with SPARQL
+            </summary>
+            <response code="200">Returns json</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.PostContainer(System.String,IcddWebApp.Services.Models.Enums.ContainerType,IcddWebApp.Services.Models.Requests.ContainerMetadataFileRequest)">
+            <summary>
+            Posts new container (id will be overwritten)
+            </summary>
+            <response code="200">Posts and returns new container</response>
+            <response code="400">Could not read container or file is missing or not of type .icdd</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project does not exist</response>
+            <response code="409">Could not rename container file</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.PostEmptyContainer(System.String,IcddWebApp.Services.Models.Enums.ContainerType,IcddWebApp.Services.Models.Requests.ContainerMetadataRequest)">
+            <summary>
+            Posts new empty container 
+            </summary>
+            <response code="200">Posts and returns new container</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetContainerVersions(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String)">
+            <summary>
+            Gets all versions of container 
+            </summary>
+            <response code="200">Returns existing versions</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetContainerVersion(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Returns specified container version
+            </summary>
+            <response code="200">Returns container as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.PostContainerVersion(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,IcddWebApp.Services.Models.Requests.ContainerMetadataRequest)">
+            <summary>
+            Posts new container version
+            </summary>
+            <response code="200">Posts and returns new container as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="409">Container version already exists</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetContainerAsFile(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String)">
+            <summary>
+            Get file of newest container version
+            </summary>
+            <response code="200">Returns container as file</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.GetContainerVersionAsFile(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Get file of specified container version
+            </summary>
+            <response code="200">Returns container as file</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.DeleteContainer(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String)">
+            <summary>
+            Deletes newest version of the container
+            </summary>
+            <response code="200">Deletes container</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="409">Container version already exists</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContainerController.DeleteContainerVersion(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Deletes specified version of the container
+            </summary>
+            <response code="200">Deletes container</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="409">Container version already exists</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.GetContainerContents(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String)">
+            <summary>
+            Gets all contents of newest version of a container
+            </summary>
+            <response code="200">Returns contents as json-list</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.GetContainerVersionContents(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Gets all contents of specified version of a container
+            </summary>
+            <response code="200">Returns contents as json-list</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerContentInternal(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,IcddWebApp.Services.Models.Requests.InternalDocumentRequest)">
+            <summary>
+            Posts new internal content to newest version of the container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerVersionContentInternal(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,IcddWebApp.Services.Models.Requests.InternalDocumentRequest)">
+            <summary>
+            Posts new internal content to a specified container version
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerContentExternal(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,IcddWebApp.Services.Models.Requests.ExternalDocumentRequest)">
+            <summary>
+            Posts new external content to newest version of the container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerVersionContentExternal(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,IcddWebApp.Services.Models.Requests.ExternalDocumentRequest)">
+            <summary>
+            Posts new external content to a container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerContentEncrypted(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,IcddWebApp.Services.Models.Requests.EncryptedDocumentRequest)">
+            <summary>
+            Posts new encrypted content to newest version of the container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerVersionContentEncrypted(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,IcddWebApp.Services.Models.Requests.EncryptedDocumentRequest)">
+            <summary>
+            Posts new encrypted content to a container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerContentFolder(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,IcddWebApp.Services.Models.Requests.FolderDocumentRequest)">
+            <summary>
+            Posts new folder content to newest version of the container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerVersionContentFolder(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,IcddWebApp.Services.Models.Requests.FolderDocumentRequest)">
+            <summary>
+            Posts new folder content to a container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerContentSecured(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,IcddWebApp.Services.Models.Requests.SecuredDocumentRequest)">
+            <summary>
+            Posts new secured content to newest version of the container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.PostContainerVersionContentSecured(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,IcddWebApp.Services.Models.Requests.SecuredDocumentRequest)">
+            <summary>
+            Posts new secured content to a container
+            </summary>
+            <response code="200">Posts and returns new content as json-ld</response>
+            <response code="400">Could not create content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.GetContainerContent(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Gets a specified content inside container
+            </summary>
+            <response code="200">Returns content as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.GetContainerVersionContent(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String)">
+            <summary>
+            Gets a specified content inside container version
+            </summary>
+            <response code="200">Returns content as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.GetContainerContentAsFile(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Gets newest version of the container as a file
+            </summary>
+            <response code="200">Returns content as file</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.GetContainerVersionContentAsFile(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String)">
+            <summary>
+            Gets the container as a file
+            </summary>
+            <response code="200">Returns content as file</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.ContentController.DeleteContainerVersionContent(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String)">
+            <summary>
+            Deletes content in container
+            </summary>
+            <response code="200">Deletes content</response>
+            <response code="400">Could not delete content</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.GetContainerLinksets(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String)">
+            <summary>
+            Gets all linksets of newest version of a container
+            </summary>
+            <response code="200">Returns linksets as json-list</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.GetContainerVersionLinksets(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Gets all linksets of a specified version of a container
+            </summary>
+            <response code="200">Returns linksets as json-list</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.GetContainerLinkset(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Gets linkset of newest version of a container
+            </summary>
+            <response code="200">Returns linksets as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.GetContainerVersionLinkset(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String)">
+            <summary>
+            Gets linkset of specified version of a container
+            </summary>
+            <response code="200">Returns linksets as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerLinkset(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Posts linkset in newest version of a container
+            </summary>
+            <response code="200">Posts and returns linksets as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerVersionLinkset(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String)">
+            <summary>
+            Posts linkset in specified version of a container
+            </summary>
+            <response code="200">Posts and returns linksets as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.GetContainerLinksetLinks(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String)">
+            <summary>
+            Gets link of specified linkset of newest version of a container
+            </summary>
+            <response code="200">Return links as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.GetContainerVersionLinksetLinks(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String)">
+            <summary>
+            Gets link of specified linkset of a container
+            </summary>
+            <response code="200">Return links as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerLinksetBinaryLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.BinaryLinkDTO})">
+            <summary>
+            Posts link of specified linkset of newest version of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerVersionLinksetBinaryLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.BinaryLinkDTO})">
+            <summary>
+            Posts link of specified linkset of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerLinksetDirectedBinaryLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.DirectedBinaryLinkDTO})">
+            <summary>
+            Posts link of specified linkset of newest version of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerVersionLinksetDirectedBinaryLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.DirectedBinaryLinkDTO})">
+            <summary>
+            Posts link of specified linkset of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerLinksetDirectedLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.DirectedLinkDTO})">
+            <summary>
+            Posts link of specified linkset of newest version of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerVersionLinksetDirectedLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.DirectedLinkDTO})">
+            <summary>
+            Posts link of specified linkset of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerLinksetDirected1ToNLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.Directed1ToNLinkDTO})">
+            <summary>
+            Posts link of specified linkset of newest version of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.PostContainerVersionLinksetDirected1ToNLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String,System.Collections.Generic.List{IcddWebApp.Services.Models.DTOs.Directed1ToNLinkDTO})">
+            <summary>
+            Posts link of specified linkset of a container
+            </summary>
+            <response code="200">Posts and returns new link as json-ld</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+            <param name="request"><b>Identifier types:</b> <br/> No Identifier - 0 <br/> StringBasedIdentifier - 1 <br/> UriBasedIdentifier - 2 <br/> QueryBasedIdentifier - 3 </param>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.DeleteContainerVersionLinkset(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String)">
+            <summary>
+            Deletes linkset in container
+            </summary>
+            <response code="200">Deletes linkset</response>
+            <response code="400">Could not delete linkset</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.LinksetController.DeleteContainerVersionLinksetLink(System.String,IcddWebApp.Services.Models.Enums.ContainerType,System.String,System.String,System.String,System.String)">
+            <summary>
+            Deletes linkset link in container
+            </summary>
+            <response code="200">Deletes linkset link</response>
+            <response code="400">Could not delete linkset link</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="404">The Project or container does not exist</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.VersionProject.GetVersions">
+            <summary>
+            Returns existing API versions
+            </summary>
+            <response code="200">Returns versions</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.VersionProject.GetUserProjects">
+            <summary>
+            Returns existing projects
+            </summary>
+            <response code="200">Returns projects</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="M:IcddWebApp.API.Controllers.VersionProject.GetProject(System.String)">
+            <summary>
+            Returns project by ID
+            </summary>
+            <response code="200">Returns project</response>
+            <response code="401">User needs to be logged in</response>
+            <response code="400">The Project does not exist or no permission to view project details</response>
+            <response code="500">Internal Server Error</response>
+        </member>
+        <member name="T:IcddWebApp.Controllers.ErrorController">
+            <inheritdoc />
+        </member>
+        <member name="M:IcddWebApp.Controllers.ErrorController.Index(System.Int32,System.String,System.String,System.Exception)">
+            <summary>
+            Renders an Error Message
+            </summary>
+            <param name="errorCode"></param>
+            <param name="errorTitle"></param>
+            <param name="errorMessage"></param>
+            <param name="innerException"></param>
+            <returns></returns>
+        </member>
+        <member name="T:IcddWebApp.PageModels.Error.ErrorPageModel">
+            <summary>
+            Error Page Model
+            </summary>
+        </member>
+        <member name="T:IcddWebApp.WebApplication.Environment.SessionManager">
+            <summary>
+            A static class delivering methods for Session Handling.
+            </summary>
+        </member>
+        <member name="M:IcddWebApp.WebApplication.Environment.SessionManager.StartSession(IIB.ICDD.Model.InformationContainer)">
+            <summary>
+            Starts a new <c>Session</c> with a specified <c>IcddContainer</c> file.
+            </summary>
+            <param name="container">The container file for which the session is started.</param>
+            <returns>a <c>string</c> containing the GUID of the <c>Session</c></returns>
+        </member>
+        <member name="T:IcddWebApp.WebApplication.Environment.Session">
+            <summary>
+            A class delivering a Session object.
+            </summary>
+            <seealso cref="T:System.IDisposable" />
+        </member>
+        <member name="F:IcddWebApp.WebApplication.Environment.Session.SessionGuid">
+            <summary>
+            The session unique identifier
+            </summary>
+        </member>
+        <member name="M:IcddWebApp.WebApplication.Environment.Session.#ctor(IIB.ICDD.Model.InformationContainer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:IcddWebApp.WebApplication.Environment.Session"/> class.
+            </summary>
+            <param name="container">The <c>IcddContainer</c> file.</param>
+        </member>
+        <member name="M:IcddWebApp.WebApplication.Environment.Session.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:IcddWebApp.WebApplication.Environment.Session.GetGuid">
+            <summary>
+            Gets the unique identifier.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:IcddWebApp.WebApplication.Environment.Session.GetContainer">
+            <summary>
+            Gets the container.
+            </summary>
+            <returns>the respective <c>IcddContainer</c> file</returns>
+        </member>
+    </members>
+</doc>

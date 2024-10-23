@@ -1,0 +1,154 @@
+﻿@model IcddWebApp.PageModels.Admin.ManageRolesPageModel
+@{
+    ViewData["Title"] = "Manage Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 pb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Admin/#">Admin</a></li>
+            <li class="breadcrumb-item" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <h5 class="display-6">Admin Area</h5>
+    <hr />
+    <div class="row">
+        <div class="col-2">
+            @{
+                await Html.RenderPartialAsync("_AdminAreaNav", Model);
+            }
+
+        </div>
+        <div class="col-9">
+            <h4>@ViewData["Title"]</h4>
+
+            <table class="table table-striped small">
+                <thead class="bg-rub-blue text-white">
+                    <tr class="bg-rub-blue text-white">
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Users</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var role in Model.AllRoles.OrderBy(x => x.Name))
+                        {
+                            <tr>
+                                <td>@role.Id</td>
+                                <td>@role.Name</td>
+                                <td>
+                                    @Html.DropDownList("roles", new SelectList(Model.RoleUsers.GetValueOrDefault(role.Id)), new { @class = "form-control rounded-0 form-control-sm" })
+                                </td>
+                                <td>
+                                    <div class="float-end">
+                                        <a href="@Url.Action("DeleteRole", "Admin", new { roleId = role.Id})" class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none"><span class="oi oi-trash"></span></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            @using (Html.BeginForm("AddRole", "Admin", FormMethod.Post))
+            {
+                <div class="float-end">
+                    <div class="input-group rounded-0">
+                        <label for="roleName" class="visually-hidden">Role Name</label>
+                        @*<input name="projectName" type="text" class="form-control form-control-sm rounded-0 border  border-rub-blue" id="projectName" placeholder="Project name">*@
+                        @Html.TextBox("roleName", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter role name" })
+                        <div class="input-group-append">
+                            <button class="btn btn-rub-green btn-sm rounded-0" type="submit">Create Role</button>
+                        </div>
+                    </div>
+
+                </div>
+            }
+            <br /><br />
+
+            <h4>Actions</h4>
+            <div class="row">
+                <div class="col-4">
+                    @using (Html.BeginForm("AddUserToRole", "Admin", FormMethod.Post))
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="display-8">Add User to Role</h5>
+                            </div>
+                            <div class="card-body">
+                                <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+                                    <tr>
+                                        <td class="small">Username</td>
+                                        <td>
+                                            @*@Html.TextBox("username", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter username" })*@
+                                            @Html.DropDownList("username", new SelectList(Model.AllUsers, "UserName", "UserName"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="small">Role Name</td>
+                                        <td>
+                                            @*@Html.TextBox("rolename", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter role name" })*@
+                                            @Html.DropDownList("rolename", new SelectList(Model.AllRoles, "Name", "Name"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-rub-green btn-sm rounded-0 float-end" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-1"></div>
+                <div class="col-4">
+                    @using (Html.BeginForm("RemoveUserFromRole", "Admin", FormMethod.Post))
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="display-8">Remove User from Role</h5>
+                            </div>
+                            <div class="card-body">
+                                <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+                                    <tr>
+                                        <td class="small">Username</td>
+                                        <td>
+                                            @*@Html.TextBox("username", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter username" })*@
+                                            @Html.DropDownList("username", new SelectList(Model.AllUsers, "UserName", "UserName"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="small">Role Name</td>
+                                        <td>
+                                            @*@Html.TextBox("rolename", "", new { @class = "form-control form-group rounded-0 form-control-sm", placeholder = "enter role name" })*@
+                                            @Html.DropDownList("rolename", new SelectList(Model.AllRoles, "Name", "Name"), new { @class = "form-control rounded-0 form-control-sm" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-danger btn-sm rounded-0 float-end" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("[href]").each(function () {
+            if (this.href == window.location.href) {
+                $(this).addClass("active bg-rub-green text-dark");
+            }
+        });
+    });
+
+</script>

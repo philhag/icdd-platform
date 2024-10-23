@@ -1,0 +1,115 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
+@using IIB.ICDD.Model.Container.Document
+@using IIB.ICDD.Model.Container.ExtendedDocument
+@using Xbim.IO.Xml.BsConf
+
+@model IcddWebApp.PageModels.Container.ContainerPageModel
+<ul>
+
+    <li data-jstree='{"opened":true,"selected":false,"icon":"oi oi-home text-rub-blue"}' id="project" data-project="@Model.Project.Id">
+        @Model.Project.Name
+        <ul>
+            @foreach (var container in Model.Project.Containers.FindAll(m => (m.Id == Model.ContainerMetadata.Id && m.Version != Model.ContainerMetadata.Version)))
+            {
+                <li data-jstree='{"opened":true,"selected":false,"icon":"oi oi-box text-rub-blue"}' data-type="other" data-project="@Model.Project.Id" data-container="@container.Id" data-containerversion="@container.Version">@container.Name <small class="text-muted">(version @container.Version of this container)</small></li>
+            }
+            <li data-jstree='{"opened":true,"selected":true,"icon":"oi oi-box text-rub-blue"}' id="root" data-project="@Model.Project.Id" data-container="@Model.ContainerMetadata.Id" data-containerversion="@Model.ContainerMetadata.Version">
+                @Model.ContainerMetadata.Name
+                <ul>
+                    <li data-jstree='{"opened":false,"icon":"jstree-file"}' id="index-node" data-project="@Model.Project.Id" data-container="@Model.ContainerMetadata.Id" data-containerversion="@Model.ContainerMetadata.Version">
+                        index.rdf
+                    </li>
+                    <li data-jstree='{"opened":true}'>
+                        Ontology Resources
+                        <ul>
+                            <li data-jstree='{"icon":"jstree-file"}' onclick="loadOntology('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', 'Container.rdf')">Container.rdf</li>
+                            <li data-jstree='{"icon":"jstree-file"}' onclick="loadOntology('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', 'Linkset.rdf')">Linkset.rdf</li>
+                            <li data-jstree='{"icon":"jstree-file"}' onclick="loadOntology('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', 'ExtendedLinkset.rdf')">ExtendedLinkset.rdf</li>
+
+                            @{
+                                foreach (var udo in Model.Container.UserDefinedOntologies)
+                                {
+                                    var filename = System.IO.Path.GetFileNameWithoutExtension(udo.GetFileName());
+                                    <li data-jstree='{"icon":"oi oi-document text-rub-blue"}' id="#pane-@filename" onclick="loadOntology('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@udo.GetFileName()')">@udo.GetFileName()</li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                    <li data-jstree='{"opened":true}'>
+                        Payload documents
+                        <ul>
+                            @{
+                                var filteredDocuments = new List<CtDocument>();
+                                filteredDocuments.AddRange(Model.Container.Documents);
+                                filteredDocuments.RemoveAll(d => (d as ExtPayloadProxy) != null);
+                                var sortedDocuments = filteredDocuments.OrderBy(m => m.Name).ToList();
+                                foreach (var doc in sortedDocuments)
+                                {
+
+                                    if ((doc as CtInternalDocument)?.OntologicalView != null)
+                                    {
+                                        var onto = (doc as CtInternalDocument).OntologicalView;
+                                        <li data-jstree='{"icon":"oi oi-document text-rub-blue"}' id="#pane-@doc.Guid" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@doc.Guid')">
+                                            @doc.Name
+                                            <ul>
+                                                <li data-jstree='{"icon":"oi oi-puzzle-piece text-rub-blue"}'>
+                                                    @onto.BaseUri
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        if ((doc as ExtDatabaseLink) != null)
+                                        {
+                                            <li data-jstree='{"icon":"oi oi-hard-drive text-rub-blue"}' id="#pane-@doc.Guid" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@doc.Guid')">
+                                                @doc.Name
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li data-jstree='{"icon":"jstree-file"}' id="#pane-@doc.Guid" onclick="loadDocument('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@doc.Guid')">
+                                                @if(doc.Requested){<span class="text-muted small">[REQ]</span>} @doc.Name
+                                            </li>
+                                        }
+
+                                    }
+                                }
+                            }
+                        </ul>
+                    </li>
+                    <li data-jstree='{"opened":true}'>
+                        Payload triples
+                        <ul>
+                            @{
+                                foreach (var linkset in Model.Container.ContainerDescription.ContainsLinkset)
+                                {
+                                    <li data-jstree='{"icon":"jstree-file"}' id="node-@linkset.Guid" onclick="loadLinkset('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@linkset.Guid')">
+                                        @linkset.FileName
+                                    </li>
+                                }
+                            }
+                            @{
+                                foreach (var triples in Model.Container.PayloadTriples)
+                                {
+                                    <li data-jstree='{"icon":"oi oi-pulse text-rub-blue"}' id="#pane-@triples.GetName()" onclick="loadPayloadTriples('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@triples.GetFileName()')">
+                                        @triples.GetFileName()
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            @{
+                var others = Model.Project.Containers.FindAll(m => m != Model.ContainerMetadata);
+                others.RemoveAll(m => (m.Id == Model.ContainerMetadata.Id && m.Version != Model.ContainerMetadata.Version));
+            }
+            @foreach (var container in others)
+            {
+                <li data-jstree='{"opened":true,"selected":false,"icon":"oi oi-box text-muted small"}' data-type="other" data-project="@Model.Project.Id" data-container="@container.Id" data-containerversion="@container.Version"> <small class="text-muted">@container.Name (belongs to the same project)</small></li>
+            }
+        </ul>
+    </li>
+</ul>

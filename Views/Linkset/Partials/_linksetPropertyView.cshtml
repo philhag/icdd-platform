@@ -1,0 +1,68 @@
+﻿@model IcddWebApp.PageModels.Container.LinksetPageModel
+@using IcddWebApp.Services.Models.Enums
+
+@{ var formUpdateLinksetId = "Form-" + Model.Linkset.Guid + "-" + Model.ContainerMetadata.InternalId;
+   var isArchived = Model.ContainerMetadata.Status == ContainerStatus.ARCHIVED ? "disabled" : ""; }
+
+<form name="UpdateContent" id=@formUpdateLinksetId>
+
+    <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+        <tr>
+            <td class="small required-asterisk">File Name</td>
+            <td>
+                @{ var fileEnd = Model.Linkset.FileName.Split(".").Last();
+                    var regexName = @"(.*." + fileEnd + @"\b)"; //@"(\w*." + fileEnd + @"\b)";
+                    var nameTitle = "Name must end with '." + fileEnd + "'";}
+                <input type="text" name="Name" value=@Model.Metadata?.Name class="form-control rounded-0 form-control-sm" pattern=@regexName title="@nameTitle" required @isArchived />
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2" scope="row" class="bg-rub-grey text-rub-blue" style="vertical-align: middle">General</th>
+        </tr>
+        <tr>
+            <td class="small">Creator</td>
+            <td>
+                <label name="Creator" class="rounded-0 form-control-sm">@Model.Metadata?.Creator</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small">Creation Date</td>
+            <td>
+                <label name="Created" class="rounded-0 form-control-sm">@Model.Metadata?.Created.ToString()</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Modifier</span></td>
+            <td>
+                @if (Model.ContainerMetadata.Modifier != null)
+                {
+                    <label name="Modifier" class="rounded-0 form-control-sm">@Model.Metadata?.Modifier</label>
+                }
+                else
+                {
+                    <label name="Modifier" class="rounded-0 form-control-sm"></label>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Modification Date</span></td>
+            <td>
+                <label name="Modified" class="rounded-0 form-control-sm">@Model.Metadata?.Modified.ToString()</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Version</span></td>
+            <td>
+                <label name="Version" class="rounded-0 form-control-sm">@Model.Metadata?.Version</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Version Description</span></td>
+            <td>
+                <label name="VersionDescription" class="rounded-0 form-control-sm">@Model.Metadata?.VersionDescription</label>
+            </td>
+        </tr>
+    </table>
+    <div class="required-asterisk-before float-start">Required Field</div>
+    <button class="btn btn-rub-green float-end rounded-0 mt-3" type="button" onclick="updateLinkset('@Model.Project.Id', '@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version', '@Model.Linkset.Guid', '@Model.ContainerMetadata.InternalId')" @isArchived><span class="oi oi-loop-square"></span> Update</button>
+</form>

@@ -1,0 +1,464 @@
+﻿@using VDS.RDF
+@using IIB.ICDD.Model.Container.Document
+@using IIB.ICDD.Model.Container.ExtendedDocument
+@using IIB.ICDD.Model.Interfaces
+@using IIB.ICDD.Model.Linkset.Link
+@using IIB.ICDD.Model
+@using System.IO
+@using IcddWebApp.Services.Models.Enums
+
+@model IcddWebApp.PageModels.Container.DocumentPageModel
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('a[data-bs-toggle="collapse"]').click(function () {
+            $(this).find('span.toggle-icon').toggleClass('oi-chevron-bottom oi-chevron-top');
+        });
+    });
+</script>
+
+@{ var isArchived = Model.ContainerMetadata.Status == ContainerStatus.ARCHIVED ? "disabled" : ""; }
+
+<section id="previev-@Model.Document.Guid" class="w-100 rounded p-2">
+    <div class="row">
+        @{ bool isFolder = Model.Document.GetType() == typeof(CtFolderDocument);
+            bool isDB = Model.Document.GetType() == typeof(ExtDatabaseLink);
+            bool isExternal = Model.Document.GetType() == typeof(CtExternalDocument);
+            string downloadText = isFolder ? "Download Folder" : "Download Document";
+            string deleteText = isFolder ? "Delete Folder" : (isDB ? "Delete Database Connection" : "Delete Document");
+        }
+        <div class="col-10 text-break">
+            @if (Model.Document.Requested)
+            {<span class="text-muted display-6">[REQ]</span>}<span class="display-6">@Model.Document.Name</span>
+        </div>
+        <div class="col-2 d-flex justify-content-end">
+            <div class="align-self-center">
+                @if (System.IO.File.Exists("wwwroot/images/doctypes/" + Model.Document.FileType + ".png"))
+                {
+
+                    string file = Model.Document.FileType;
+                    file += ".png";
+                    <img class="d-flex" style="width: 64px; height: 64px; padding: 5px;" src="~/images/doctypes/@file" alt="@file" />
+                }
+                else
+                {
+                    if (isDB)
+                    {
+                        <h1><i class="oi oi-hard-drive  p-2 text-rub-blue"></i></h1>
+                    }
+                    else if (isFolder)
+                    {
+                        <h1><i class="oi oi-folder p-2 text-rub-blue"></i></h1>
+                    }
+                    else
+                    {
+                        <h1><i class="oi oi-document p-2 text-rub-blue"></i></h1>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12 flex-row d-flex justify-content-end align-items-start">
+
+
+
+        </div>
+    </div>
+</section>
+
+<div class="clearfix"></div>
+
+
+<ul class="nav nav-tabs navbar-dark">
+    <li class="nav-item">
+        <a id="content-tab" class="nav-link active" aria-current="page" href="#" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab" aria-controls="content" aria-selected="true">Content</a>
+    </li>
+    <li class="nav-item">
+        <a id="link-tab" class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#links" type="button" role="tab" aria-controls="links" aria-selected="false">Related links</a>
+    </li>
+    <li class="nav-item">
+        <a id="json-tab" class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab" aria-controls="json" aria-selected="false">JSONLD</a>
+    </li>
+    <li class="nav-item ms-auto">
+        @{
+            if (Model.Document.Requested)
+            {
+                <button class="btn btn-rub-blue rounded-0 btn-sm me-1" type="button" data-bs-toggle="modal" data-bs-target="#modalAddRequestedDocument-@Model.Document.Guid"><span class="oi oi-data-transfer-upload"></span> Add Document</button>
+            }
+            else if (!isDB)
+            {
+                <a href="@Url.Action("DownloadContent", "Container", new { projId = Model.Project.Id, id = Model.ContainerMetadata.Id, containerVersion = Model.ContainerMetadata.Version, contentId = Model.Document.Guid })"
+                   class="btn btn-outline-success btn-sm rounded-0 btn-block me-1">
+                    <span class="oi oi-cloud-download"></span> @downloadText
+                </a>
+            }
+            else
+            {
+                <button id="loadDbAsPayloadTriples" class="btn btn-rub-blue rounded-0 btn-sm me-1" type="button" onclick="window.loadDbAsPayloadTriples('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@Model.Metadata.Id')"><span class="oi oi-fire"></span> Convert to triples</button>
+            }
+        }
+    </li>
+    <li class="nav-item">
+        <button class="btn btn-outline-danger btn-sm rounded-0 float-end" data-bs-toggle="modal" data-bs-target="#modalDeleteContent-@Model.Document.Guid" @isArchived><span class="oi oi-x"></span> @deleteText</button>
+    </li>
+</ul>
+
+<div class="tab-content border border-2 border-top-0">
+    <div class="tab-pane active" id="content" role="tabpanel" aria-labelledby="content-tab">
+
+        <section id="content-section-@Model.Document.Guid" class="w-100">
+            @if (!Model.Document.Requested)
+            {
+                if (Model.Document.FileType.ToLower().Contains("jpg") || Model.Document.FileType.ToLower().Contains("jpeg") || Model.Document.FileType.ToLower().Contains("png"))
+                {
+                    var fullPath = "";
+                    if (!isExternal)
+                    {
+                        var temp = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "downloads", "container", Model.Container.ContainerGuid, "thumbnails");
+                        Directory.CreateDirectory(temp);
+                        var tempImage = System.IO.Path.Combine(temp, Model.Document.Name);
+                        var image = System.IO.Path.Combine(Model.Container.GetDocumentFolder(), Model.Document.Name);
+                        File.Copy(image, tempImage, true);
+                        var relPath = System.IO.Path.Combine("downloads", "container", Model.Container.ContainerGuid, "thumbnails", Model.Document.Name).Replace("\\", "/");
+                        fullPath = Url.Content("~/" + relPath);
+
+                    }
+                    else
+                    {
+                        fullPath = (Model.Document as CtExternalDocument)?.Url;
+                    }
+
+                    <div class="align-content-center d-flex" style="width: 100%;">
+
+                        <img src="@fullPath" class="img-thumbnail mx-auto my-3 d-inline-flex" style="max-width: 100%;" alt="@Model.Document.Name" />
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="float-start p-2">
+                        <p><span class="text-muted"><b>Image description:</b> @Model.Document.Description</span></p>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+
+                }
+                else if (Model.Document.FileType.ToLower().Contains("pdf"))
+                {
+                    var fullPath = "";
+                    if (!isExternal)
+                    {
+                        var temp = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "downloads", "container", Model.Container.ContainerGuid, "pdf");
+                        Directory.CreateDirectory(temp);
+                        var tempImage = System.IO.Path.Combine(temp, Model.Document.Name);
+                        var image = System.IO.Path.Combine(Model.Container.GetDocumentFolder(), Model.Document.Name);
+                        File.Copy(image, tempImage, true);
+                        var relPath = System.IO.Path.Combine("downloads", "container", Model.Container.ContainerGuid, "pdf", Model.Document.Name).Replace("\\", "/");
+                        fullPath = Url.Content("~/" + relPath);
+
+                    }
+                    else
+                    {
+                        fullPath = (Model.Document as CtExternalDocument)?.Url;
+                    }
+
+                    <div class="align-content-center d-flex" style="width: 100%;">
+                        <embed src="@fullPath" style="width: 100%; height: 500px;" class="border" />
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="float-start p-2">
+                        <p><span class="text-muted"><b>Document description:</b> @Model.Document.Description</span></p>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+
+                }
+                else if (Model.Document.FileType.ToLower().Contains("xml"))
+                {
+                    var fullPath = "";
+                    var relPath = "";
+                    if (!isExternal)
+                    {
+                        var temp = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "downloads", "container", Model.Container.ContainerGuid, "xml");
+                        Directory.CreateDirectory(temp);
+                        var tempImage = System.IO.Path.Combine(temp, Model.Document.Name);
+                        var image = System.IO.Path.Combine(Model.Container.GetDocumentFolder(), Model.Document.Name);
+                        File.Copy(image, tempImage, true);
+                        relPath = System.IO.Path.Combine("downloads", "container", Model.Container.ContainerGuid, "xml", Model.Document.Name).Replace("\\", "/");
+                        fullPath = Url.Content("~/" + relPath);
+
+                    }
+                    else
+                    {
+                        fullPath = (Model.Document as CtExternalDocument)?.Url;
+                    }
+                    <div class="clearfix m-2">
+                        <p><span class="fw-bold">XML-Tree-Viewer</span></p>
+                    </div>
+                    <div class="align-content-center d-flex" style="width: 100%;">
+                        <link rel="stylesheet" href="~/static_lib/xml/data-tree.css" />
+                        <script src="~/static_lib/xml/data-tree.js"></script>
+
+
+                        <div id="data-xml" class="w-100 border p-2 m-2 d-block"></div>
+                        <script>
+                        $(document).ready(function() {
+                            var dataTree = new DataTree({
+                                fpath: '@fullPath',
+                                container: '#data-xml',
+                                attrs: 'hide'
+                            });
+                        });
+                        </script>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="float-start p-2">
+                        <p><span class="text-muted"><b>Document description:</b> @Model.Document.Description</span></p>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+
+                }
+                else if (Model.Document.FileType.ToLower().Contains("ttl") || Model.Document.FileType.ToLower().Contains("rdf"))
+                {
+                    @if (Model.Document is CtInternalDocument doc)
+                    {
+                        foreach (IcddOntology ont in doc.ReferenceOntologies)
+                        {
+                            <ul class="list-group mb-2">
+                                <li class="list-group-item bg-rub-blue text-white rounded-0">
+                                    Individuals of @ont.GetFileName()
+                                </li>
+                                @foreach (var i in ont.Classes().Select(cl => doc.ReferenceOntologies.First().Instances(doc.OntologicalView, cl.Value)).SelectMany(inst => inst))
+                                {
+                                    <li class="list-group-item">
+                                        @i.Key.Identifier
+                                        <a class="btn btn-sm btn-link float-end text-rub-blue" data-bs-toggle="collapse" data-bs-target="#collapse-@i.Key.Identifier" role="button" aria-expanded="false" aria-controls="collapse-@i.Key.Identifier"><span class="oi oi-chevron-bottom toggle-icon"></span></a>
+
+                                        <div class="collapse border-top m-2 p-2" id="collapse-@i.Key.Identifier">
+
+                                            @foreach (var trip in i.Value.TriplesWithSubject)
+                                            {
+                                                var property = new IcddResourceWrapper(trip.Predicate as UriNode);
+                                                <div class="row g-0">
+                                                    <div class="col-5">
+                                                        @property.Identifier
+                                                    </div>
+                                                    <div class="col-5">
+                                                        @{
+                                                            var string1 = "";
+                                                            var lit = trip.Object as LiteralNode;
+                                                            if (lit != null)
+                                                            {
+                                                                string1 = lit.Value;
+                                                                <input class="form-control form-control-sm rounded-0 disabled" value="@string1" />
+                                                            }
+                                                            else
+                                                            {
+                                                                /*@*/
+                                                                if (trip.Object != null)
+                                                                {
+                                                                    var obj = trip.Object as UriNode;
+                                                                    if (obj != null)
+                                                                    {
+                                                                        if (trip.Object.Graph.NamespaceMap.ReduceToQName(obj.Uri.AbsoluteUri, out string qname2))
+                                                                        {
+                                                                            <a href="@obj.Uri.AbsoluteUri" target="_blank"><strong>@qname2</strong></a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="@obj.Uri.AbsoluteUri" target="_blank">
+                                                                                <strong>
+                                                                                    @trip.Object.ToString()
+                                                                                </strong>
+                                                                            </a>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (trip.Object.NodeType == NodeType.Blank)
+                                                                        {
+                                                                            var bl = trip.Object as BlankNode;
+                                                                            @bl.ToString()
+                                                                            ;
+                                                                        }
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        }
+
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <button class="btn btn-rub-blue btn-sm rounded-0"><span class="oi oi-pencil"></span></button>
+                                                    </div>
+
+                                                </div>
+
+                                            }
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    }
+                }
+                else if (Model.Document.FileType.ToLower().Contains("ifc"))
+                {
+                    var relations = Model.ContainerModelContext.GetIfcObjectsWithSpatialRelation(Model.Document);
+
+                    <div class="border-2 border border-rub-blue bg-rub-blue text-white">
+
+                        <div class="container-fluid">
+                            <span class="mr-1 float-end small">(@relations.Count Entities of IfcBuildingStory)</span>
+                            <span class="fw-bold ml-1">IFC Object Browser</span><br />
+                        </div>
+
+                        @foreach (var kvp in relations)
+                        {
+                            <details class="collapseTables bg-rub-blue text-white p-1 m-0 w-100" id="collapseDiv @kvp.Key" open="">
+                                <summary class="fw-bold">@kvp.Key</summary>
+                                <table class="table table-sm table-striped table-bordered bg-white w-100 m-0 p-0">
+                                    <thead width="100%" class="bg-rub-blue text-white">
+                                        <tr width="100%" class="bg-rub-blue text-white small">
+                                            <th scope="col" width="50%">IfcName</th>
+                                            <th scope="col" width="20%">IfcType</th>
+                                            <th scope="col" width="30%">IfcGuid</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var path = Model.ContainerMetadata.Content.Where(x => x.Id == Model.Document.Guid).Select(x => x.Location).SingleOrDefault();
+                                            var objs = Model.ContainerModelContext.GetIfcObjectsWithSpatialRelation(Model.Document);
+                                            foreach (var obj in kvp.Value)
+                                            {
+
+                                                <tr class="small">
+                                                    <td width="50%">@obj.GetName()</td>
+                                                    <td width="20%">@obj.GetObjectType()</td>
+                                                    <td width="30%">
+
+                                                        @{
+                                                            await Html.RenderPartialAsync("Controls/_IfcGuidButton", new Tuple<string, string>(Model.Document.Guid, obj.GetGuid()));
+                                                        }
+
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                                <script>
+                                    for (let elem of window.selected) {
+                                        appSelectElem(parseInt(elem), false, false);
+                                    }
+                                </script>
+
+                            </details>
+                        }
+                    </div>
+
+                }
+                else if (Model.Document.IsSameOrSubclass(typeof(ExtDatabaseLink)))
+                {
+                    <div style="height: 200px;" class="p-2">
+                        <span>There is no preview available for this type of document.</span>
+                    </div>
+                }
+                else
+                {
+                    <div style="height: 200px;" class="p-2">
+                        <span>There is no preview available for this type of document.</span>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="height: 200px;" class="p-2">
+                    <h1 class="display-6">This is a requirement placeholder file.</h1>
+                </div>
+            }
+        </section>
+    </div>
+    <div class="tab-pane" id="links" role="tabpanel" aria-labelledby="link-tab">
+        <section id="links-section-@Model.Document.Guid" style="width: 100%;">
+            <table class="table table-sm table-striped table-bordered w-100" style="width: 100%;">
+                <thead class="bg-rub-blue text-white w-100" style="width: 100%;">
+                    <tr class="bg-rub-blue text-white">
+                        <th scope="col">Link type</th>
+                        <th scope="col">Identifier</th>
+                        <th scope="col">Linked documents</th>
+                        <th scope="col">Details</th>
+                    </tr>
+                </thead>
+                @{ foreach (var linkset in Model.Container.Linksets)
+                    {
+                        var list = linkset.HasLinks.FindAll(m => m.HasLinkElements.FindAll(x => x.HasDocument.Equals(Model.Document)).Count > 0);
+                        foreach (LsLink link in list)
+                        {
+                            <tr>
+                                <td>
+
+                                    @{ string filelink = link.EffectiveType.ToLower();
+                                        if (link.GetType().IsSubclassOf(typeof(LsDirected1ToNLink)))
+                                        {
+                                            filelink = "directed1tonlink";
+                                        }
+                                        else if (link.GetType().IsSubclassOf(typeof(LsDirectedBinaryLink)))
+                                        {
+                                            filelink = "directedbinarylink";
+                                        }
+
+                                        filelink += ".png";}
+                                    @if (System.IO.File.Exists("wwwroot/images/linktypes/" + filelink))
+                                    {
+                                        <img class="img-fluid" style="padding: 5px; width:100px; vertical-align:middle;" src="~/images/linktypes/@filelink" alt="@filelink" />
+
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var elem in link.HasLinkElements)
+                                    {
+                                        if (elem.HasDocument.Equals(Model.Document))
+                                        {
+                                            if (elem.HasIdentifier != null)
+                                            {
+                                                <p>@elem.HasIdentifier?.ToString()</p>
+                                            }
+                                            else
+                                            {
+                                                <p>-</p>
+                                            }
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var elem in link.HasLinkElements)
+                                    {
+                                        if (!elem.HasDocument.Equals(Model.Document))
+                                        {
+                                            <p>@elem.ToString()</p>
+                                        }
+                                    }
+                                </td>
+                                <td> <button id="details-@link.Guid" onclick="loadLink('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@linkset.Guid','@link.Guid')" class="btn btn-link"><span class="oi oi-external-link"></span></button></td>
+                            </tr>
+
+                        }
+                    }
+                }
+
+            </table>
+        </section>
+    </div>
+    <div class="tab-pane" id="json" role="tabpanel" aria-labelledby="json-tab">
+        <section id="json-section-@Model.Document.Guid" style="width: 100%;">
+            <textarea class="font-monospace w-100 small" style="height: 500px;">
+            @Html.Raw(Model.Document.ToJsonLDString())
+            </textarea>
+        </section>
+    </div>
+</div>

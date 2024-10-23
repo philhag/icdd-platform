@@ -1,0 +1,5 @@
+﻿@model Tuple<string, string> 
+    
+@*Document.Guid,IfcGuid*@
+
+<button class="btn btn-link btn-sm rounded-0 p-0 guidButton" type="button" onclick="window.selectAndZoom('@Model.Item1','@Model.Item2')"><span class="oi oi-eye me-1"></span>@Model.Item2</button>

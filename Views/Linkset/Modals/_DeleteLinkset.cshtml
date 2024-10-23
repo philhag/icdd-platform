@@ -1,0 +1,28 @@
+﻿@using IIB.ICDD.Model.Container
+@model IcddWebApp.PageModels.Container.LinksetPageModel
+
+
+@foreach (CtLinkset linkset in Model.Container.Linksets)
+{
+    <!-- Modal -->
+    <div class="modal" id="modalDeleteLinkset-@linkset.Guid" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Linkset</h5>
+                    <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <label>Are you sure you want to delete the linkset '<b>@linkset.FileName</b>'?</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger rounded-0" onclick="deleteLinkset('@Model.Project.Id','@Model.ContainerMetadata.Id','@Model.ContainerMetadata.Version','@linkset.Guid')">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

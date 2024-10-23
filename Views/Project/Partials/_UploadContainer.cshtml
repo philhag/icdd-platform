@@ -1,0 +1,41 @@
+﻿@using IcddWebApp.PageModels.Project
+@using IcddWebApp.Services.Models.Enums
+
+@model IcddWebApp.PageModels.Project.ProjectDetailPageModel
+
+@using (Html.BeginForm("Upload", "Container", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="card panel-default rounded-0">
+        <div class="card-header rounded-0 fw-bold">
+            Upload Container to project: @Model.Project.Name
+        </div>
+        <div class="card-body rounded-0">
+
+            <div class="media">
+                <div class="row">
+                    <div class="col-9">
+                        <img class="img-fluid" style="width: 265px;" src="~/images/building_upload.png" alt="Generic placeholder image">
+                    </div><br />
+                </div>
+            </div>
+
+            @Html.Hidden("projId", Model.Project.Id)
+            <div class="input-group mb-3">
+                <span class="input-group-text required-asterisk" style="width:100px;" id="basic-addon2">File</span>
+                <input type="file" name="uploadFile" id="uploadFile" class="form-control rounded-0" accept=".icdd" required />
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text required-asterisk" style="width:100px;" id="basic-addon2">Suitability</span>
+                @Html.DropDownList("containerSuitability", new SelectList(Enum.GetValues(typeof(ContainerSuitability))), new { @class = "form-select rounded-0 form-select-sm", required = "required" })
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text required-asterisk" style="width:100px;" id="basic-addon2">Status</span>
+                @Html.DropDownList("containerStatus", new SelectList(Enum.GetValues(typeof(ContainerStatus))), new { @class = "form-select rounded-0 form-select-sm", required = "required" })
+            </div>
+        </div>
+        <div class="card-footer required-asterisk-wrapper">
+            <div class="required-asterisk-before">Required Field</div>
+            <button type="submit" class="btn btn-sm btn-rub-green rounded-0"> <span class="oi oi-data-transfer-upload" title="person" aria-hidden="true"></span> Upload</button>
+        </div>
+    </div>
+}

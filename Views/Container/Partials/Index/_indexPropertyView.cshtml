@@ -1,0 +1,146 @@
+﻿@model IcddWebApp.PageModels.Container.ContainerPageModel
+@using IcddWebApp.Services.Models.Enums
+@using (Html.BeginForm("UpdateContainer", "Container", FormMethod.Post))
+{
+    var container = Model.Container;
+    var containerDesc = Model.Container.ContainerDescription;
+    var metadata = Model.ContainerMetadata;
+
+    @Html.Hidden("projId", new { projId = Model.Project.Id })
+    @Html.Hidden("id", new { id = Model.ContainerMetadata.Id })
+    @Html.Hidden("containerVersion", new { containerVersion = Model.ContainerMetadata.Version })
+
+    var isArchived = Model.ContainerMetadata.Status == ContainerStatus.ARCHIVED ? true : false;
+
+    <table style="width: 100%" class="table table-sm table-light table-bordered p-0 m-0">
+        <tr>
+            <th colspan="2" scope="row" class="bg-rub-grey text-rub-blue" style="vertical-align: middle">General</th>
+        </tr>
+        <tr>
+            <td class="small required-asterisk">File Name</td>
+            <td>
+                @if (isArchived)
+                {
+                    @Html.TextBoxFor(m => m.ContainerMetadata.Name, new { @class = "form-control rounded-0 form-control-sm m-0", required = "required", pattern = @"(.*.icdd\b)", title = "Name must end with '.icdd'", disabled = "disabled" })
+
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.ContainerMetadata.Name, new { @class = "form-control rounded-0 form-control-sm m-0", required = "required", pattern = @"(.*.icdd\b)", title = "Name must end with '.icdd'" })
+
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <td class="small required-asterisk">Status</td>
+            <td>
+                @if (isArchived)
+                {
+                    @Html.DropDownListFor(m => m.ContainerMetadata.Status, new SelectList(Enum.GetValues(typeof(ContainerStatus))), new { @class = "form-select rounded-0 form-select-sm", required = "required", disabled = "disabled" })
+
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.ContainerMetadata.Status, new SelectList(Enum.GetValues(typeof(ContainerStatus))), new { @class = "form-select rounded-0 form-select-sm", required = "required" })
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="small required-asterisk">Suitability</td>
+            <td>
+                @if (isArchived)
+                {
+                    @Html.DropDownListFor(m => m.ContainerMetadata.Suitability, new SelectList(Enum.GetValues(typeof(ContainerSuitability))), new { @class = "form-select rounded-0 form-select-sm", required = "required", disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.ContainerMetadata.Suitability, new SelectList(Enum.GetValues(typeof(ContainerSuitability))), new { @class = "form-select rounded-0 form-select-sm", required = "required" })
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="small required-asterisk">Description</td>
+            <td>
+                @if (isArchived)
+                {
+                    @Html.TextBoxFor(m => m.ContainerMetadata.Description, new { @class = "form-control rounded-0 form-control-sm", required = "required", disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.ContainerMetadata.Description, new { @class = "form-control rounded-0 form-control-sm", required = "required" })
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="small required-asterisk">Revision</td>
+            <td>
+                @if (isArchived)
+                {
+                    @Html.TextBoxFor(m => m.ContainerMetadata.Revision, new { @class = "form-control rounded-0 form-control-sm", required = "required", type = "number", disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.ContainerMetadata.Revision, new { @class = "form-control rounded-0 form-control-sm", required = "required", type = "number" })
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="small">Creator</td>
+            <td>
+                @Html.TextBoxFor(m => m.ContainerMetadata.Creator, new { @class = "form-control rounded-0 form-control-sm", @disabled = "disabled" })
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Creation Date</span></td>
+            <td>
+                @Html.TextBoxFor(m => m.ContainerMetadata.Created, new { @class = "form-control rounded-0 form-control-sm", @disabled = "disabled" })
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Publisher</span></td>
+            <td>
+                @Html.TextBoxFor(m => m.ContainerMetadata.Publisher, new { @class = "form-control rounded-0 form-control-sm", @disabled = "disabled" })
+            </td>
+        </tr>
+        <tr>
+            <td class="small"><span>Modifier</span></td>
+            <td>
+                @if (Model.ContainerMetadata.Modifier != null)
+                {
+                    @Html.Label("Modifier", Model.ContainerMetadata.Modifier, new { @class = "form-control rounded-0 form-control-sm", @disabled = "disabled", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.Label("Modifier", "", new { @class = "form-control rounded-0 form-control-sm", @disabled = "disabled", @readonly = "readonly" })
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="small">ModificationDate</td>
+            <td>
+                @Html.TextBoxFor(m => m.ContainerMetadata.Modified, new { @class = "form-control rounded-0 form-control-sm ", @disabled = "disabled" })
+            </td>
+        </tr>
+        <tr>
+            <td class="small">VersionID</td>
+            <td>
+                @Html.TextBoxFor(m => m.ContainerMetadata.Version, new { @class = "form-control rounded-0 form-control-sm ", @disabled = "disabled" })
+            </td>
+        </tr>
+        <tr>
+            <td class="small">Recipients</td>
+            <td>
+                @Html.ListBoxFor(m => m.ContainerMetadata.Recipients, new SelectList(Model.ContainerMetadata.Recipients), new { @class = "form-control form-group rounded-0 form-control-sm ", @disabled = "disabled" })
+            </td>
+        </tr>
+    </table><div class="required-asterisk-before float-start">Required Field</div>
+    @if (isArchived)
+    {
+        <button id="UpdateItem-@containerDesc.Guid" class="btn btn-rub-green float-end rounded-0 mt-3" type="submit" disabled><span class="oi oi-loop-square"></span> Update</button>
+    }
+    else
+    {
+        <button id="UpdateItem-@containerDesc.Guid" class="btn btn-rub-green float-end rounded-0 mt-3" type="submit"><span class="oi oi-loop-square"></span> Update</button>
+    }
+}

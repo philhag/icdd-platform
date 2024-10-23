@@ -1,0 +1,62 @@
+﻿@model IcddWebApp.PageModels.Container.ContainerPageModel
+
+<div class="row g-0 p-0 m-0">
+    <div class="col-12">
+        <div class="input-group mb-3">
+            <span class="input-group-text required-asterisk rounded-0 bg-rub-blue text-white" style="width: 100px;" id="basic-addon2"><i class="oi oi-excerpt me-2"></i> Shapes</span>
+            <textarea id="shacl-shapes" name="shacl-shapes" class="form-control rounded-0 font-monospace" placeholder="Shapes" aria-label="Shapes" aria-describedby="basic-addon2" required style="height:350px; width:350px;">
+@@prefix ExtendedLinkset: <https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#> .
+@@prefix ct: <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#> .
+@@prefix ls: <https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#> .
+@@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@@prefix sh: <http://www.w3.org/ns/shacl#> .
+@@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .            
+ </textarea>
+        </div>
+    </div>
+</div>
+<div class="float-end">
+    <div class="required-asterisk-before d-inline px-2">Required Field</div>
+    <button type="submit" class="btn btn-rub-blue rounded-0 d-inline" onclick="queryContainerShacl('@Model.ContainerMetadata.Id', '@Model.ContainerMetadata.Version','@Model.Project.Id')">Execute</button>
+</div>
+<div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="chkApplyInference" onclick="toastr.info('Inference engine attached/detached','SHACL validation')" checked="checked">
+    <label class="form-check-label" for="chkApplyInference-shacl">Apply RDFS Inference</label>
+</div>
+
+<div class="clearfix"></div>
+<hr />
+
+<div id="query-status-shacl" class="float-end"></div>
+<div id="query-results-shacl" class="float-end"></div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabular" type="button" role="tab" aria-controls="tabular" aria-selected="true">Tabular</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab" aria-controls="json" aria-selected="false">JSON</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent" style="height:270px;">
+    
+    <div class="tab-pane fade show active  border rounded-0" id="tabular" role="tabpanel" aria-labelledby="tabular-tab" style="height: 280px;">
+        <div id="shacl-header" class="row bg-rub-blue text-white m-0 p-0 w-100">
+            <div class='col-2'>Severity</div>
+            <div class='col-2'>SourceShape</div>
+            <div class='col-2'>FocusNode</div>
+            <div class='col-2'>FocusPath</div>
+            <div class='col-2'>FocusValue</div>
+            <div class='col-2'>Message</div>
+        </div>
+        <div id="validation-results-shacl-tabular" style="overflow-y: scroll; height: 254px;" class="m-0 p-0"></div>
+    </div>
+    <div class="tab-pane fade border rounded-0" id="json" role="tabpanel" aria-labelledby="json-tab" style="height: 280px;">
+        <textarea id="validation-results-shacl-json" class="form-control border-0 mh-100" aria-describedby="basic-addon2" style="height: 280px;"></textarea>
+    </div>
+</div>
+
+

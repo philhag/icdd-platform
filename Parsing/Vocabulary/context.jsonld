@@ -1,0 +1,114 @@
+{
+  "ContainerDescription": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ContainerDescription",
+  "Document": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Document",
+  "InternalDocument": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#InternalDocument",
+  "ExternalDocument": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#ExternalDocument",
+  "Linkset": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Linkset",
+  "EncryptedDocument": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#EncryptedDocument",
+  "SecuredDocument": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#SecuredDocument",
+  "FolderDocument": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#FolderDocument",
+  "Person": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Person",
+  "Organisation": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Organisation",
+  "name": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#name",
+  "description": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#description",
+  "conformanceIndicator": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#conformanceIndicator",
+  "containsDocument": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#containsDocument",
+  "containsLinkset": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#containsLinkset",
+  "belongsToContainer": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#belongsToContainer",
+  "url": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#url",
+  "format": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#format",
+  "filetype": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filetype",
+  "foldername": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#foldername",
+  "checksum": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksum",
+  "checksumAlgorithm": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#checksumAlgorithm",
+  "encryptionAlgorithm": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#encryptionAlgorithm",
+  "filename": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#filename",
+  "alternativeDocument": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#alternativeDocument",
+  "versionId": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#versionId",
+  "versionDescription": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#versionDescription",
+  "priorVersion": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#priorVersion",
+    "@type": "@id"
+  },
+  "creationDate": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#creationDate",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "modificationDate": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#modificationDate",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "isModified": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#isModified",
+    "@type": "http://www.w3.org/2001/XMLSchema#boolean"
+  },
+  "requested": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#requested",
+    "@type": "http://www.w3.org/2001/XMLSchema#boolean"
+  },
+  "modifiedBy": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#modifiedBy",
+    "@type": "@id"
+  },
+  "createdBy": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#createdBy",
+    "@type": "@id"
+  },
+  "publishedBy": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#publishedBy",
+    "@type": "@id"
+  },
+  "queryExpression": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#queryExpression",
+  "queryLanguage": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#queryLanguage",
+  "identifier": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#identifier",
+  "identifierField": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#identifierField",
+  "hasDocument": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasDocument",
+    "@type": "@id"
+  },
+  "hasToLinkElement": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasToLinkElement",
+    "@type": "@id"
+  },
+  "hasFromLinkElement": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasFromLinkElement",
+    "@type": "@id"
+  },
+  "uri": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#uri",
+    "@type": "@id"
+  },
+  "hasLinkElement": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasLinkElement",
+    "@type": "@id"
+  },
+  "hasIdentifier": {
+    "@id": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#hasIdentifier",
+    "@type": "@id"
+  },
+  "Link": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Link",
+  "BinaryLink": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#BinaryLink",
+  "DirectedLink": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedLink",
+  "DirectedBinaryLink": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#DirectedBinaryLink",
+  "Directed1toNLink": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Directed1toNLink",
+  "Identifier": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#Identifier",
+  "LinkElement": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#LinkElement",
+  "QueryBasedIdentifier": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#QueryBasedIdentifier",
+  "StringBasedIdentifier": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#StringBasedIdentifier",
+  "URIBasedIdentifier": "https://standards.iso.org/iso/21597/-1/ed-1/en/Linkset#URIBasedIdentifier",
+  "Elaborates": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#Elaborates",
+  "IsIdenticalTo": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsIdenticalTo",
+  "HasPart": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#HasPart",
+  "IsPartOf": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsPartOf",
+  "Controls": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#Controls",
+  "IsElaboratedBy": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsElaboratedBy",
+  "Specialises": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#Specialises",
+  "Supersedes": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#Supersedes",
+  "IsAlternativeTo": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsAlternativeTo",
+  "IsMemberOf": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsMemberOf",
+  "IsSpecialisedAs": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsSpecialisedAs",
+  "IsControlledBy": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsControlledBy",
+  "IsSupersededBy": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#IsSupersededBy",
+  "HasMember": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#HasMember",
+  "ConflictsWith": "https://standards.iso.org/iso/21597/-2/ed-1/en/ExtendedLinkset#ConflictsWith"
+}

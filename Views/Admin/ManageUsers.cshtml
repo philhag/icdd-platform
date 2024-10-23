@@ -1,0 +1,208 @@
+﻿@model IcddWebApp.PageModels.Admin.ManageUsersPageModel
+@{
+    ViewData["Title"] = "Manage Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 pb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="~/#">Start</a></li>
+            <li class="breadcrumb-item"><a href="~/Admin/#">Admin</a></li>
+            <li class="breadcrumb-item" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <h5 class="display-6">Admin Area</h5>
+    <hr />
+    <div class="row">
+        <div class="col-2">
+            @{
+                await Html.RenderPartialAsync("_AdminAreaNav", Model);
+            }
+
+        </div>
+        <div class="col-9">
+            <h4>@ViewData["Title"]</h4>
+
+            <table class="table table-striped small">
+                <thead class="bg-rub-blue text-white">
+                    <tr class="bg-rub-blue text-white">
+                        <th scope="col">ID</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Email Confirmed</th>
+                        <th scope="col">Tel.</th>
+                        <th scope="col">Tel. Confirmed</th>
+                        <th scope="col">TwoFactor</th>
+                        <th scope="col">AccessFailed</th>
+                        <th scope="col">Projects</th>
+                        <th scope="col">Roles</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var user in Model.AllUsers.OrderBy(x => x.UserName))
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td>@user.UserName</td>
+                                <td>@user.Email</td>
+                                <td>@user.EmailConfirmed</td>
+                                <td>@user.PhoneNumber</td>
+                                <td>@user.PhoneNumberConfirmed</td>
+                                <td>@user.TwoFactorEnabled</td>
+                                <td>@user.AccessFailedCount</td>
+                                <td>
+                                    @Html.DropDownList("projects", new SelectList(user.Projects, "Id", "Name"), new { @class = "form-control rounded-0 form-control-sm" })
+                                </td>
+                                <td>
+                                    @Html.DropDownList("projects", new SelectList(Model.UserRoles.GetValueOrDefault(user.Id)), new { @class = "form-control rounded-0 form-control-sm" })
+                                </td>
+                                <td>
+                                    <div class="float-end">
+                                        <button class="btn btn-outline-info btn-sm rounded-0 btn-block float-none" data-bs-toggle="modal" data-bs-target="#modalUpdateUser-@user.Id"><span class="oi oi-pencil"></span></button>
+                                        <button class="btn btn-outline-danger btn-sm rounded-0 btn-block float-none" data-bs-toggle="modal" data-bs-target="#modalDeleteUser-@user.Id"><span class="oi oi-trash"></span></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Modal -->
+                            <div class="modal" id="modalDeleteUser-@user.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Delete user</h5>
+                                            <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        @using (Html.BeginForm("DeleteUser", "Admin", FormMethod.Post))
+                                        {
+                                            <div class="modal-body">
+                                                @Html.Hidden("username", user.UserName)
+                                                <div class="input-group mb-3">
+                                                    <label>Are you sure you want to delete the user '<b>@user.UserName</b>'?</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger rounded-0">Delete</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal" id="modalUpdateUser-@user.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Update user <b>@user.UserName</b></h5>
+                                            <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        @using (Html.BeginForm("UpdateUser", "Admin", FormMethod.Post))
+                                        {
+                                            <div class="modal-body">
+                                                @Html.Hidden("username", user.UserName)
+                                                <div class="form-group mb-3">
+                                                    @Html.Label("Username")
+                                                    @Html.TextBox("newUsername", user.UserName, new { @class = "form-control rounded-0 form-control-sm" })
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    @Html.Label("Email")
+                                                    @Html.TextBox("newEmail", user.Email, new { @class = "form-control rounded-0 form-control-sm" })
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    @Html.Label("Email Confirmed")<br />
+                                                    @Html.CheckBox("newEmailConfirmed", user.EmailConfirmed)
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    @Html.Label("Telephone")
+                                                    @Html.TextBox("newPhoneNumber", user.PhoneNumber, new { @class = "form-control rounded-0 form-control-sm" })
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    @Html.Label("Telephone Confirmed")<br />
+                                                    @Html.CheckBox("newPhoneNumberConfirmed", user.PhoneNumberConfirmed)
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    @Html.Label("Two Factor Authentification Enabled")<br />
+                                                    @Html.CheckBox("newTwoFactorEnabled", user.TwoFactorEnabled)
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-rub-green rounded-0">Update</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <h4>Actions</h4>
+            <div class="row">
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="display-8">Delete unconfirmed accounts</h5>
+                        </div>
+                        <div class="card-body">
+                            Will delete all unconfirmed (email) accounts.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-warning btn-sm rounded-0 float-end" data-bs-toggle="modal" data-bs-target="#modalDeleteUnconfirmedAccounts">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modalDeleteUnconfirmedAccounts" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete unconfirmed accounts</b></h5>
+                    <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @using (Html.BeginForm("DeleteUnconfirmedUsers", "Admin", FormMethod.Post))
+                {
+                    <div class="modal-body">
+                        <h5>Choose unconfirmed accounts to be permanently deleted:</h5>
+                        @{ var unconfirmedAccounts = Model.AllUsers.Where(x => x.EmailConfirmed == false).ToList();
+
+                        }
+                        @Html.ListBox("unconfirmedAccounts", new SelectList(unconfirmedAccounts.Select(x => x.UserName).ToList()), new { @class = "form-control rounded-0 form-control-sm" })
+                        <br />
+                        <button type="button" class="btn btn-sm btn-dark rounded-0" onclick="selectUnconfirmedAccounts()">Select All</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger rounded-0">Delete</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("[href]").each(function () {
+                if (this.href == window.location.href) {
+                    $(this).addClass("active bg-rub-green text-dark");
+                }
+            });
+        });
+
+        function selectUnconfirmedAccounts() {
+            var listbox = document.getElementById("unconfirmedAccounts");
+            for (var i = 0; i < listbox.options.length; i++) {
+                listbox.options[i].selected = true;
+            }
+        }
+
+    </script>

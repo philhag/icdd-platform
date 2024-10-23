@@ -1,0 +1,40 @@
+﻿@using IcddWebApp.Services.Models
+@model IcddWebApp.PageModels.Container.ContainerPageModel
+
+@{
+    Model.ContainerMetadata.SparqlQueries.Sort(delegate (SparqlQuery x, SparqlQuery y) { return y.GeneratedAt.CompareTo(x.GeneratedAt); });
+
+}
+
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white border">
+    <div class="p-3 link-dark text-decoration-none border-bottom bg-rub-blue text-white">
+        <i class="oi oi-clipboard me-2"></i>
+        <span class="fs-5 fw-semibold">Saved queries</span>
+    </div>
+
+    <div class="list-group list-group-flush border-bottom scrollarea">
+
+        @foreach (var q in Model.ContainerMetadata.SparqlQueries)
+        {
+            <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
+                <small class="text-muted float-end">@q.GeneratedAt.ToShortDateString() @q.GeneratedAt.ToShortTimeString() </small>
+
+                @if (string.IsNullOrEmpty(q.Name))
+                {
+                    <strong class="mb-1">Saved query</strong><br />
+                }
+                else
+                {
+                    <strong class="mb-1">@q.Name</strong><br />
+                }
+
+
+                <div class="my-1 small font-monospace">
+
+                    <div id="queryBtn-@q.Id" class="queryBtnClass" type="button" value=@q.Query>@q.Query</div>
+
+                </div>
+            </a>
+        }
+    </div>
+</div>
